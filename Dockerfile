@@ -1,44 +1,28 @@
-# syntax = docker/dockerfile:1
+# syntax=docker/dockerfile:1
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=18.16.0
-FROM node:${NODE_VERSION}-slim as base
+FROM node:18-alpine3.16 AS builder
+# Set working directory
+WORKDIR /app
+RUN yarn global add turbo@1.8.8 pnpm
+COPY --link . .
+RUN turbo prune --scope=bot --docker
 
-LABEL fly_launch_runtime="NodeJS"
-
-# NodeJS app lives here
+# Add lockfile and package.json's of isolated subworkspace
+FROM node:18-alpine3.16 AS installer
+RUN apk update && apk add --update --no-cache curl libc6-compat openrc openssl1.1-compat-dev && \
+    rm -rf /var/cache/apk/*
+RUN yarn global add pnpm
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV=production
+# First install the dependencies (as they change less often)
+COPY --link --from=builder /app/out/json/ .
+COPY --link --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --frozen-lockfile
 
-
-# Throw-away build stage to reduce size of final image
-FROM base as build
-
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install -y python-is-python3 pkg-config build-essential 
-
-# Install node modules
-COPY --link package.json .
-RUN npm install --production=false
-
-# Copy application code
-COPY --link . .
-
-# Build application
-RUN npm run build
-
-# Remove development dependencies
-RUN npm prune --production
-
-
-# Final stage for app image
-FROM base
-
-# Copy built application
-COPY --from=build /app /app
-
-# Start the server by default, this can be overwritten at runtime
-CMD [ "npm", "run", "start" ]
+# Build the project
+COPY --link --from=builder /app/out/full/ .
+COPY --link turbo.json turbo.json
+COPY --link start-bot.sh start-bot.sh
+RUN pnpm build --filter=bot...
+ENTRYPOINT [ "node", "apps/bot/build/main.js" ]
