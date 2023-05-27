@@ -7,12 +7,17 @@ import { ButtonStyle, ComponentType, EmbedBuilder } from "discord.js";
 export class HandleChannelCreate {
 	@On()
 	async channelCreate([channel]: ArgsOf<"channelCreate">) {
-		if (!channel.guild || !channel.isTextBased()) return;
+		if (!channel.guild || !channel.isTextBased() || !channel.parentId) return;
 
-		// const associatesCategoryId = await prisma.associatesConfiguration.findFirst({}).then(config => config?.categoryId);
-		// if (channel.parentId !== associatesCategoryId) return;
+		const associatesCategoryId = await prisma.associatesConfiguration
+			.findFirst({})
+			.then(config => config?.categoryId);
+		if (!associatesCategoryId) return;
+		if (BigInt(channel.parentId) !== associatesCategoryId) return;
 
-		const retryDelayDays = await prisma.associatesConfiguration.findFirst({}).then(config => config?.retryDelayDays ?? 5);
+		const retryDelayDays = await prisma.associatesConfiguration
+			.findFirst({})
+			.then(config => config?.retryDelayDays ?? 7);
 
 		const embed = new EmbedBuilder()
 			.setTitle("Building Bulletin Associates Degree Quiz")

@@ -31,26 +31,26 @@ model Message {
 }
 
 model AssociatesConfiguration {
-  id               BigInt  @id @unique @default(autoincrement())
+  id               Int     @id @unique @default(autoincrement())
   categoryId       BigInt?
   associatesRoleId BigInt?
   retryDelayDays   Int?
 }
 
 model AssociatesQuiz {
-  id        BigInt                @id @unique @default(autoincrement())
+  id        Int                   @id @unique @default(autoincrement())
   createdAt DateTime              @default(now())
   updatedAt DateTime              @updatedAt
   questions AssociatesQuestions[]
 }
 
 model AssociatesQuestions {
-  id       BigInt                      @id @unique @default(autoincrement())
+  id       Int                         @id @unique @default(autoincrement())
   question String
   choices  AssociatesQuestionChoices[]
   type     AssociatesQuestionTypes
   quiz     AssociatesQuiz              @relation(fields: [quizId], references: [id])
-  quizId   BigInt
+  quizId   Int
 }
 
 enum AssociatesQuestionTypes {
@@ -59,15 +59,15 @@ enum AssociatesQuestionTypes {
 }
 
 model AssociatesQuestionChoices {
-  id         BigInt              @id @unique @default(autoincrement())
+  id         Int                 @id @unique @default(autoincrement())
   choice     String
   question   AssociatesQuestions @relation(fields: [questionId], references: [id])
   correct    Boolean
-  questionId BigInt
+  questionId Int
 }
 
 model AssociatesResponses {
-  id         BigInt   @id @unique @default(autoincrement())
+  id         Int      @id @unique @default(autoincrement())
   score      Int
   answerDict Json     @default("{}")
   userId     BigInt

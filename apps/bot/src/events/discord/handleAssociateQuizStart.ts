@@ -157,6 +157,44 @@ export class HandleAssociateQuizStart {
 			}
 		});
 
+        // assert that for each question if it is multiple choice there are at least 2 choices with at least one being correct
+        // and if it is single choice there is at least 2 choices with exactly one being correct
+        for (const question of questions) {
+            if (question.type === "MULTIPLE_CHOICE") {
+                const correctChoices = question.choices.filter(choice => choice.correct);
+                if (correctChoices.length < 1) {
+                    await interaction.followUp({
+                        content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-NO-CORRECT-MCQ-CHOICES`,
+                        ephemeral: true
+                    });
+                    return;
+                }
+                if (question.choices.length < 2) {
+                    await interaction.followUp({
+                        content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-LESS-THAN-2-MCQ-CHOICES`,
+                        ephemeral: true
+                    });
+                    return;
+                }
+            } else if (question.type === "SINGLE_CHOICE") {
+                const correctChoices = question.choices.filter(choice => choice.correct);
+                if (correctChoices.length !== 1) {
+                    await interaction.followUp({
+                        content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-NOT-EXACTLY-1-CORRECT-SCQ-CHOICE`,
+                        ephemeral: true
+                    });
+                    return;
+                }
+                if (question.choices.length < 2) {
+                    await interaction.followUp({
+                        content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-LESS-THAN-2-SCQ-CHOICES`,
+                        ephemeral: true
+                    });
+                    return;
+                }
+            }
+        }
+
 		questions = questions.sort(() => Math.random() - 0.5).slice(0, 5);
 
 		for (const question of questions) {
