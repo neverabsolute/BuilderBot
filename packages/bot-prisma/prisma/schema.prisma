@@ -11,12 +11,13 @@ datasource db {
 }
 
 model User {
-  id                  BigInt            @id @unique
-  username            String?
-  discriminator       Int?
-  nickname            String?
-  joinedServerAt      DateTime?
-  messages            Message[]
+  id             BigInt                @id @unique
+  username       String?
+  discriminator  Int?
+  nickname       String?
+  joinedServerAt DateTime?
+  messages       Message[]
+  responses      AssociatesResponses[]
 }
 
 model Message {
@@ -27,4 +28,31 @@ model Message {
   userId    BigInt
   channelId BigInt
   guildId   BigInt
+}
+
+model AssociatesConfiguration {
+  id             BigInt                @id @unique @default(autoincrement())
+  category       BigInt?
+  retryDelayDays Int?
+  questions      AssociatesQuestions[]
+}
+
+model AssociatesQuestions {
+  id              BigInt                  @id @unique @default(autoincrement())
+  question        String
+  answer          String
+  configuration   AssociatesConfiguration @relation(fields: [id], references: [id])
+  configurationId BigInt
+  responses       AssociatesResponses[]
+}
+
+model AssociatesResponses {
+  id         BigInt              @id @unique @default(autoincrement())
+  answer     String
+  userId     BigInt
+  user       User                @relation(fields: [userId], references: [id])
+  createdAt  DateTime
+  updatedAt  DateTime
+  questionId BigInt
+  question   AssociatesQuestions @relation(fields: [questionId], references: [id])
 }

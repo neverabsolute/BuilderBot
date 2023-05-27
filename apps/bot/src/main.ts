@@ -1,13 +1,9 @@
 import { dirname as dir, importx } from "@discordx/importer";
 import { GuildMember, IntentsBitField } from "discord.js";
 import { Client } from "discordx";
-import { dirname } from "path";
 import "reflect-metadata";
-import { fileURLToPath } from "url";
+import { saveMessage, upsertUser } from "./common/util.js";
 import { BOT_TOKEN } from "./configs.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export const bot = new Client({
 	// To only use global commands (use @Guild for specific guild command), comment this line
@@ -39,19 +35,19 @@ bot.once("ready", async () => {
 });
 
 bot.on("interactionCreate", async interaction => {
-	// if (interaction.member instanceof GuildMember) {
-	// 	await upsertUser(interaction.member);
-	// }
+	if (interaction.member instanceof GuildMember) {
+		await upsertUser(interaction.member);
+	}
 
 	bot.executeInteraction(interaction);
 });
 
 bot.on("messageCreate", async message => {
 	if (message.author.bot) return;
-	// if (message.member) {
-	// 	await upsertUser(message.member);
-	// 	await saveMessage(message);
-	// }
+	if (message.member) {
+		await upsertUser(message.member);
+		await saveMessage(message);
+	}
 	await bot.executeCommand(message);
 });
 
