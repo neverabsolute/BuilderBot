@@ -17,6 +17,11 @@
 			"outputs": ["build/**"],
 			"cache": false
 		},
+		"build:dev": {
+			"dependsOn": ["lint", "^build", "generate"],
+			"outputs": ["build/**"],
+			"cache": false
+		},
 		"dev": {
 			"dependsOn": ["init", "build:dev"],
 			"cache": false

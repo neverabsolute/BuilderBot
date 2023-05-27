@@ -9,7 +9,7 @@
 		"module": "ESNext",
 		"moduleResolution": "NodeNext",
 		"outDir": "build",
-		"rootDir": "apps/bot/src",
+		"rootDir": "src",
 		"skipLibCheck": false,
 		"sourceMap": true,
 		"sourceRoot": "/",

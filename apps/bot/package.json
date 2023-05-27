@@ -1,5 +1,5 @@
 {
-	"name": "builderbot",
+	"name": "bot",
 	"version": "0.0.0",
 	"private": true,
 	"license": "MIT",
@@ -10,17 +10,17 @@
 		"build:dev": "tsc --incremental && copyfiles -u 1 \"./src/common/resources/**/*\" build",
 		"dev": "tsc-watch --onSuccess \"node build/main.js\" --noClear",
 		"start": "yarn migrate:deploy && node build/main.js",
-		"deploy": "cd ../.. && flyctl deploy --dockerfile Dockerfile --remote-only",
+		"deploy": "cd ../.. && flyctl deploy -c fly.toml --dockerfile Dockerfile --remote-only",
 		"lint": "eslint . --ext .ts"
 	},
 	"dependencies": {
-		"@discordx/importer": "^1.2.2",
+		"@discordx/importer": "^1.2.1",
 		"@discordx/pagination": "^3.4.1",
 		"@discordx/utilities": "^5.2.1",
-		"discord.js": "^14.11.0",
-		"discordx": "^11.7.6",
-		"reflect-metadata": "^0.1.13",
-		"bot-prisma": "workspace:*"
+		"bot-prisma": "workspace:*",
+		"discord.js": "^14.8.0",
+		"discordx": "^11.7.4",
+		"reflect-metadata": "^0.1.13"
 	},
 	"devDependencies": {
 		"@types/node": "^18.7.14",

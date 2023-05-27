@@ -10,7 +10,6 @@
 		"generate": "prisma generate",
 		"db:pull": "prisma db pull",
 		"db:push": "prisma db push",
-		"db:push:bot": "prisma db push",
 		"migrate:deploy": "prisma migrate deploy",
 		"build": "tsc",
 		"init": "tsc",
