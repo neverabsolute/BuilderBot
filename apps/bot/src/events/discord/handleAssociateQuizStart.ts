@@ -204,7 +204,7 @@ export class HandleAssociateQuizStart {
 				.setCustomId(`associateQuestion`)
 				.setPlaceholder(
 					question.type === "MULTIPLE_CHOICE"
-						? "Select all correct answers"
+						? "Select all that apply"
 						: "Select the correct answer"
 				)
 				.setMinValues(1)
