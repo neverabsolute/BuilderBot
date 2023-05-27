@@ -1,0 +1,30 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "./generated"
+  engineType    = "binary"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  BigInt            @id @unique
+  username            String?
+  discriminator       Int?
+  nickname            String?
+  joinedServerAt      DateTime?
+  messages            Message[]
+}
+
+model Message {
+  id        BigInt   @id @unique
+  author    User     @relation(fields: [userId], references: [id])
+  createdAt DateTime
+  content   String
+  userId    BigInt
+  channelId BigInt
+  guildId   BigInt
+}

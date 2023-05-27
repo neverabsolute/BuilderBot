@@ -1,4 +1,8 @@
+**/.turbo
+**/node_modules
 .turbo
-build
 node_modules
-src/common/resources
+.vscode
+**/build
+**/prisma/generated
+**/prisma/migrations

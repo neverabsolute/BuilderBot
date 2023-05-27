@@ -33,9 +33,9 @@ bot.once("ready", async () => {
 	await bot.guilds.fetch();
 
 	await bot.initApplicationCommands();
+	bot.user?.setActivity(".gg/buildingbulletin");
 
 	console.log("Bot started");
-	bot.user?.setActivity("no offenced but...");
 });
 
 bot.on("interactionCreate", async interaction => {
