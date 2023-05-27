@@ -23,7 +23,7 @@ model User {
 model Message {
   id        BigInt   @id @unique
   author    User     @relation(fields: [userId], references: [id])
-  createdAt DateTime
+  createdAt DateTime @default(now())
   content   String
   userId    BigInt
   channelId BigInt
@@ -39,17 +39,17 @@ model AssociatesConfiguration {
 
 model AssociatesQuiz {
   id        BigInt                @id @unique @default(autoincrement())
-  createdAt DateTime
-  updatedAt DateTime
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
   questions AssociatesQuestions[]
 }
 
 model AssociatesQuestions {
-  id       BigInt                     @id @unique @default(autoincrement())
+  id       BigInt                      @id @unique @default(autoincrement())
   question String
-  choices  AssociatesQuestionChoice[]
+  choices  AssociatesQuestionChoices[]
   type     AssociatesQuestionTypes
-  quiz     AssociatesQuiz             @relation(fields: [quizId], references: [id])
+  quiz     AssociatesQuiz              @relation(fields: [quizId], references: [id])
   quizId   BigInt
 }
 
@@ -58,7 +58,7 @@ enum AssociatesQuestionTypes {
   SINGLE_CHOICE
 }
 
-model AssociatesQuestionChoice {
+model AssociatesQuestionChoices {
   id         BigInt              @id @unique @default(autoincrement())
   choice     String
   question   AssociatesQuestions @relation(fields: [questionId], references: [id])
@@ -67,12 +67,13 @@ model AssociatesQuestionChoice {
 }
 
 model AssociatesResponses {
-  id        BigInt   @id @unique @default(autoincrement())
-  score     Int
-  userId    BigInt
-  channelId BigInt
-  finished  Boolean
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime
-  updatedAt DateTime
+  id         BigInt   @id @unique @default(autoincrement())
+  score      Int
+  answerDict Json     @default("{}")
+  userId     BigInt
+  channelId  BigInt
+  finished   Boolean
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

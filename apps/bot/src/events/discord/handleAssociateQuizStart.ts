@@ -1,16 +1,15 @@
+import { prisma } from "bot-prisma";
 import {
-	CommandInteraction,
-	GuildMember,
-	EmbedBuilder,
-	ButtonStyle,
-	StringSelectMenuBuilder,
 	ActionRowBuilder,
+	ButtonStyle,
+	CommandInteraction,
+	ComponentType,
+	EmbedBuilder,
+	GuildMember,
+	StringSelectMenuBuilder,
 	StringSelectMenuOptionBuilder
 } from "discord.js";
-
 import { ButtonComponent, Discord } from "discordx";
-
-import { prisma } from "bot-prisma";
 import { upsertUser } from "../../common/util.js";
 
 const alphabet = new Map([
@@ -60,9 +59,26 @@ export class HandleAssociateQuizStart {
 			.then(config => config?.retryDelayDays ?? 5);
 		const associatesResponses = await prisma.associatesResponses.findMany({
 			where: {
-				userId: discordUser.id
+				userId: discordUser.id,
+				finished: true
 			}
 		});
+
+		const responsesForChannel = await prisma.associatesResponses.findMany({
+			where: {
+				channelId: BigInt(interaction.channelId)
+			}
+		});
+
+		if (responsesForChannel.length > 0) {
+			const message = await interaction.editReply({
+				content: "A quiz is already in progress in this channel."
+			});
+			setTimeout(() => {
+				message.delete();
+			}, 5000);
+			return;
+		}
 
 		if (
 			associatesResponses.some(response => {
@@ -73,11 +89,10 @@ export class HandleAssociateQuizStart {
 		) {
 			const timeTillRetry = new Date();
 			timeTillRetry.setDate(timeTillRetry.getDate() + numDaysAgo);
-			await interaction.reply({
+			await interaction.editReply({
 				content: `You have already taken the quiz within the last ${numDaysAgo} days. You can take it again <t:${Math.floor(
 					timeTillRetry.getTime() / 1000
-				)}:R>`,
-				ephemeral: true
+				)}:R>`
 			});
 			await interaction.channel?.send({
 				// eslint-disable-next-line no-irregular-whitespace
@@ -90,15 +105,46 @@ export class HandleAssociateQuizStart {
 		}
 
 		const quiz = await prisma.associatesQuiz.findFirst({});
+		const inProgressResponses = await prisma.associatesResponses.findMany({
+			where: {
+				userId: discordUser.id,
+				finished: false
+			}
+		});
 
 		if (!quiz) {
 			await interaction.followUp({
 				content:
-					"Looks like something went wrong, please reach out to a Professor for assistance.",
+					"Looks like something went wrong, please reach out to a Professor for assistance.\nErrorCode: ERR-NO-QUIZ",
 				ephemeral: true
 			});
 			return;
 		}
+
+		if (inProgressResponses.length > 0) {
+			const message = await interaction.followUp({
+				content:
+					"You already have a quiz in progress, please finish that one first.",
+				ephemeral: true
+			});
+			setTimeout(() => {
+				message.delete();
+			}, 5000);
+			return;
+		}
+
+		await prisma.associatesResponses.create({
+			data: {
+				user: {
+					connect: {
+						id: discordUser.id
+					}
+				},
+				channelId: BigInt(interaction.channelId),
+				score: 0,
+				finished: false
+			}
+		});
 
 		let questions = await prisma.associatesQuestions.findMany({
 			where: {
@@ -117,7 +163,7 @@ export class HandleAssociateQuizStart {
 			question.choices = question.choices.sort(() => Math.random() - 0.5);
 
 			const selectMenu = new StringSelectMenuBuilder()
-				.setCustomId(`question-${question.id}`)
+				.setCustomId(`associateQuestion`)
 				.setPlaceholder(
 					question.type === "MULTIPLE_CHOICE"
 						? "Select all correct answers"
@@ -132,7 +178,7 @@ export class HandleAssociateQuizStart {
 				selectMenu.addOptions(
 					new StringSelectMenuOptionBuilder()
 						.setLabel(alphabet.get(question.choices.indexOf(choice)) || "")
-						.setValue(String(choice.id))
+						.setValue(`${question.id}-${choice.id}`)
 				);
 			}
 
@@ -154,5 +200,29 @@ export class HandleAssociateQuizStart {
 				components: [row]
 			});
 		}
+
+		const embed = new EmbedBuilder()
+			.setTitle("Submit!")
+			.setDescription(
+				"Once you have answered all questions, click the button below to submit your answers. There is no going back!"
+			)
+			.setColor("Green");
+
+		await interaction.channel?.send({
+			embeds: [embed],
+			components: [
+				{
+					type: ComponentType.ActionRow,
+					components: [
+						{
+							type: ComponentType.Button,
+							label: "Submit!",
+							style: ButtonStyle.Success,
+							customId: "submit-associates-quiz"
+						}
+					]
+				}
+			]
+		});
 	}
 }
