@@ -17,7 +17,9 @@ export class HandleAssociateQuizStart {
 		}
 
 		const discordUser = await upsertUser(member);
-        const numDaysAgo = await prisma.associatesConfiguration.findFirst({}).then(config => config?.retryDelayDays);
+		const numDaysAgo = await prisma.associatesConfiguration
+			.findFirst({})
+			.then(config => config?.retryDelayDays ?? 5);
 		const associatesResponses = await prisma.associatesResponses.findMany({
 			where: {
 				userId: discordUser.id
@@ -27,13 +29,16 @@ export class HandleAssociateQuizStart {
 		if (
 			associatesResponses.some(response => {
 				const daysAgo = new Date();
-				daysAgo.setDate(daysAgo.getDate() - 5);
+				daysAgo.setDate(daysAgo.getDate() - numDaysAgo);
 				return response.createdAt > daysAgo;
 			})
 		) {
+			const timeTillRetry = new Date();
+			timeTillRetry.setDate(timeTillRetry.getDate() + numDaysAgo);
 			await interaction.reply({
-				content:
-					"You have already taken the quiz within the last 5 days. You can take it again in 5 days.",
+				content: `You have already taken the quiz within the last ${numDaysAgo} days. You can take it again <t:${Math.floor(
+					timeTillRetry.getTime() / 1000
+				)}:R>`,
 				ephemeral: true
 			});
 			return;
@@ -43,5 +48,7 @@ export class HandleAssociateQuizStart {
 			content: "Starting quiz...",
 			ephemeral: true
 		});
+
+        
 	}
 }

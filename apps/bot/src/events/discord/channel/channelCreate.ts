@@ -12,10 +12,12 @@ export class HandleChannelCreate {
 		// const associatesCategoryId = await prisma.associatesConfiguration.findFirst({}).then(config => config?.category);
 		// if (channel.parentId !== associatesCategoryId) return;
 
+		const retryDelayDays = await prisma.associatesConfiguration.findFirst({}).then(config => config?.retryDelayDays ?? 5);
+
 		const embed = new EmbedBuilder()
 			.setTitle("Building Bulletin Associates Degree Quiz")
 			.setDescription(
-				"This quiz is designed to test your knowledge of building in Rust. It is a multiple choice quiz with 10 questions. You will be given a score at the end of the quiz. A perfect score is required to pass. If you do not get a perfect score, you can retry in 5 days."
+				`This quiz is designed to test your knowledge of building in Rust.\n\nIt is a multiple choice quiz with 10 questions.\n\nYou will be given a score at the end of the quiz.\n\nA perfect score is required to pass.\n\nIf you do not get a perfect score, you can retry in ${retryDelayDays} days.`
 			)
 			.setColor("Green");
 

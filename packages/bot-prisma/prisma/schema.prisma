@@ -30,29 +30,47 @@ model Message {
   guildId   BigInt
 }
 
+model QuestionChoice {
+  id         BigInt              @id @unique @default(autoincrement())
+  choice     String
+  question   AssociatesQuestions @relation(fields: [questionId], references: [id])
+  questionId BigInt
+}
+
 model AssociatesConfiguration {
-  id             BigInt                @id @unique @default(autoincrement())
+  id             BigInt  @id @unique @default(autoincrement())
   category       BigInt?
   retryDelayDays Int?
-  questions      AssociatesQuestions[]
+}
+
+enum AssociatesQuestionTypes {
+  MULTIPLE_CHOICE
+  SINGLE_CHOICE
 }
 
 model AssociatesQuestions {
-  id              BigInt                  @id @unique @default(autoincrement())
-  question        String
-  answer          String
-  configuration   AssociatesConfiguration @relation(fields: [id], references: [id])
-  configurationId BigInt
-  responses       AssociatesResponses[]
+  id       BigInt                  @id @unique @default(autoincrement())
+  question String
+  choices  QuestionChoice[]
+  type     AssociatesQuestionTypes
+  answer   String
+  quiz     AssociatesQuiz[]
 }
 
 model AssociatesResponses {
-  id         BigInt              @id @unique @default(autoincrement())
-  answer     String
-  userId     BigInt
-  user       User                @relation(fields: [userId], references: [id])
+  id        BigInt   @id @unique @default(autoincrement())
+  score     Int
+  userId    BigInt
+  channelId BigInt
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+model AssociatesQuiz {
+  id         BigInt                @id @unique @default(autoincrement())
   createdAt  DateTime
   updatedAt  DateTime
   questionId BigInt
-  question   AssociatesQuestions @relation(fields: [questionId], references: [id])
+  questions  AssociatesQuestions[]
 }
