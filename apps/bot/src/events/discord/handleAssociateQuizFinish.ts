@@ -1,13 +1,7 @@
 import { Prisma, prisma } from "bot-prisma";
 import {
-	ActionRowBuilder,
-	ButtonStyle,
 	CommandInteraction,
-	ComponentType,
-	EmbedBuilder,
-	GuildMember,
-	StringSelectMenuBuilder,
-	StringSelectMenuOptionBuilder
+	GuildMember
 } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
 import { upsertUser } from "../../common/util.js";
