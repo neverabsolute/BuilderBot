@@ -1,0 +1,10 @@
+**/.turbo
+**/node_modules
+.turbo
+node_modules
+.vscode
+**/build
+**/.svelte-kit
+**/prisma/generated
+.env
+tsconfig.tsbuildinfo

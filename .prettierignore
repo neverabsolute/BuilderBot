@@ -1,0 +1,7 @@
+**/node_modules
+node_modules
+.vscode
+**/build
+**/prisma/generated
+**/prisma/migrations
+**/*.sql
