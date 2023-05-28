@@ -119,7 +119,7 @@ export class HandleAssociateQuizStart {
 			}, 60000);
 		} else {
 			await interaction.followUp({
-				content: `Unfortunately you did not pass the quiz. You scored a ${score} out of ${maxScore}. You can retry in 5 days.`,
+				content: `Unfortunately you did not pass the quiz. You scored a ${score} out of ${maxScore}. You can retry in ${config.retryDelayDays} days.`,
 				ephemeral: true
 			});
 			await interaction.channel?.send({

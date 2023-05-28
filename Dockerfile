@@ -23,6 +23,6 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
 # Build the project
 COPY --link --from=builder /app/out/full/ .
 COPY --link turbo.json turbo.json
-COPY --link start-bot.sh start-bot.sh
+COPY --link entrypoint.sh entrypoint.sh
 RUN pnpm build --filter=bot...
-ENTRYPOINT [ "node", "apps/bot/build/main.js" ]
+ENTRYPOINT [ "/bin/sh", "entrypoint.sh" ]
