@@ -16,6 +16,7 @@
 - Install [PostgreSQL](https://www.postgresql.org/download/)
 - Create a user called `builderbot` with the password `builderbot`, make it superuser
 - Create a database called `builderbot` owned by the user `builderbot`
+- Copy the file `/packages/bot-prisma/.env.example` to `/packages/bot-prisma/.env`
 
 ### Installing NVM
 
