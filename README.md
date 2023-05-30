@@ -6,7 +6,7 @@
 >
 > There is a great video for setting up and using WSL [here](https://www.youtube.com/watch?v=oF6gLyhQDdw).
 
-### Creating a Discord Bot
+### Creating a Discord bot
 
 - https://discord.dev
 - Enable all privileged intents
