@@ -3,9 +3,9 @@ import type { ArgsOf } from "discordx";
 import { Discord, On } from "discordx";
 
 @Discord()
-export class HandleChannelCreate {
+export class HandleChannelDelete {
 	@On()
-	async channelCreate([channel]: ArgsOf<"channelDelete">) {
+	async channelDelete([channel]: ArgsOf<"channelDelete">) {
 		const openResponsesForChannel = await prisma.associatesResponses.findMany({
 			where: {
 				channelId: BigInt(channel.id),
