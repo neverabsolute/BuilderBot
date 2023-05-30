@@ -14,8 +14,8 @@
 ### Database setup
 
 - Install [PostgreSQL](https://www.postgresql.org/download/)
-- Create a database called `builderbot`
 - Create a user called `builderbot` with the password `builderbot`, make it superuser
+- Create a database called `builderbot` owned by the user `builderbot`
 
 ### Installing NVM
 
@@ -24,6 +24,7 @@
 ### Installing Node.js
 
 ```bash
+nvm install 18
 nvm use 18
 ```
 
