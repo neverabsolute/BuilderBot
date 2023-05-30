@@ -1,8 +1,5 @@
 import { Prisma, prisma } from "bot-prisma";
-import {
-	CommandInteraction,
-	GuildMember
-} from "discord.js";
+import { CommandInteraction, GuildMember } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
 import { upsertUser } from "../../common/util.js";
 
@@ -41,6 +38,7 @@ export class HandleAssociateQuizStart {
 				choices: true
 			}
 		});
+
 		const quiz = await prisma.associatesQuiz.findFirst({});
 		const config = await prisma.associatesConfiguration.findFirst({});
 
@@ -56,13 +54,12 @@ export class HandleAssociateQuizStart {
 		const userAnswer = response[0].answerDict as Prisma.JsonArray;
 
 		let score = 0;
-		const maxScore = questions
-			.filter(question => userAnswer[question.id] !== undefined)
-			.map(question => question.choices.find(choice => choice.correct)?.id)
-			.filter(Boolean).length;
+
 		for (const question of questions) {
-			const correctAnswer = question.choices.find(choice => choice.correct)?.id;
-			if (!correctAnswer) {
+			const correctAnswers = question.choices
+				.filter(choice => choice.correct)
+				.map(choice => choice.id);
+			if (correctAnswers.length === 0) {
 				await interaction.followUp({
 					content:
 						"Looks like something went wrong, please reach out to a Professor for assistance.\nErrorCode: ERR-NO-CORRECT-ANSWER",
@@ -73,19 +70,25 @@ export class HandleAssociateQuizStart {
 			const userAnswerForQuestion = userAnswer[question.id];
 
 			if (question.type === "SINGLE_CHOICE") {
-				if (correctAnswer === userAnswerForQuestion) {
+				if (correctAnswers.includes(userAnswerForQuestion as number)) {
 					score++;
 				}
 			} else if (question.type === "MULTIPLE_CHOICE") {
 				if (Array.isArray(userAnswerForQuestion)) {
-					if (userAnswerForQuestion.includes(correctAnswer)) {
-						score++;
-					}
+					// Calculate correct and incorrect answers provided by the user
+					const correctUserAnswers = userAnswerForQuestion.filter(answer =>
+						correctAnswers.includes(answer as number)
+					).length;
+					const incorrectUserAnswers =
+						userAnswerForQuestion.length - correctUserAnswers;
+
+					// Adjust the score
+					score += correctUserAnswers - incorrectUserAnswers;
 				}
 			}
 		}
 
-		if (score === maxScore) {
+		if (score === response[0].maxScore) {
 			await interaction.followUp({
 				content:
 					"Congratulations! You passed the quiz! The Associate Degree has been awarded to you!",
@@ -119,7 +122,7 @@ export class HandleAssociateQuizStart {
 			}, 60000);
 		} else {
 			await interaction.followUp({
-				content: `Unfortunately you did not pass the quiz. You scored a ${score} out of ${maxScore}. You can retry in ${config.retryDelayDays} days.`,
+				content: `Unfortunately you did not pass the quiz. You scored a ${score} out of ${response[0].maxScore}. You can retry in ${config.retryDelayDays} days.`,
 				ephemeral: true
 			});
 			await interaction.channel?.send({

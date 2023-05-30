@@ -88,7 +88,13 @@ export class HandleAssociateQuizStart {
 			})
 		) {
 			const timeTillRetry = new Date();
-			timeTillRetry.setDate(timeTillRetry.getDate() + numDaysAgo);
+			// set the timeTillRetry to the date of which the last quiz taken + numDaysAgo days
+			timeTillRetry.setDate(
+				associatesResponses
+					.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0]
+					.createdAt.getDate() + numDaysAgo
+			);
+
 			await interaction.editReply({
 				content: `You have already taken the quiz within the last ${numDaysAgo} days. You can take it again <t:${Math.floor(
 					timeTillRetry.getTime() / 1000
@@ -99,7 +105,7 @@ export class HandleAssociateQuizStart {
 				content: `This channel will be deleted in 60 seconds.||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||<@${interaction.user.id}>`
 			});
 			setTimeout(() => {
-				interaction.channel?.delete();
+				interaction.channel?.delete().catch(() => {});
 			}, 60000);
 			return;
 		}
@@ -133,7 +139,7 @@ export class HandleAssociateQuizStart {
 			return;
 		}
 
-		await prisma.associatesResponses.create({
+		const response = await prisma.associatesResponses.create({
 			data: {
 				user: {
 					connect: {
@@ -157,45 +163,61 @@ export class HandleAssociateQuizStart {
 			}
 		});
 
-        // assert that for each question if it is multiple choice there are at least 2 choices with at least one being correct
-        // and if it is single choice there is at least 2 choices with exactly one being correct
-        for (const question of questions) {
-            if (question.type === "MULTIPLE_CHOICE") {
-                const correctChoices = question.choices.filter(choice => choice.correct);
-                if (correctChoices.length < 1) {
-                    await interaction.followUp({
-                        content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-NO-CORRECT-MCQ-CHOICES`,
-                        ephemeral: true
-                    });
-                    return;
-                }
-                if (question.choices.length < 2) {
-                    await interaction.followUp({
-                        content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-LESS-THAN-2-MCQ-CHOICES`,
-                        ephemeral: true
-                    });
-                    return;
-                }
-            } else if (question.type === "SINGLE_CHOICE") {
-                const correctChoices = question.choices.filter(choice => choice.correct);
-                if (correctChoices.length !== 1) {
-                    await interaction.followUp({
-                        content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-NOT-EXACTLY-1-CORRECT-SCQ-CHOICE`,
-                        ephemeral: true
-                    });
-                    return;
-                }
-                if (question.choices.length < 2) {
-                    await interaction.followUp({
-                        content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-LESS-THAN-2-SCQ-CHOICES`,
-                        ephemeral: true
-                    });
-                    return;
-                }
-            }
-        }
+		// assert that for each question if it is multiple choice there are at least 2 choices with at least one being correct
+		// and if it is single choice there is at least 2 choices with exactly one being correct
+		for (const question of questions) {
+			if (question.type === "MULTIPLE_CHOICE") {
+				const correctChoices = question.choices.filter(
+					choice => choice.correct
+				);
+				if (correctChoices.length < 1) {
+					await interaction.followUp({
+						content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-NO-CORRECT-MCQ-CHOICES`,
+						ephemeral: true
+					});
+					return;
+				}
+				if (question.choices.length < 2) {
+					await interaction.followUp({
+						content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-LESS-THAN-2-MCQ-CHOICES`,
+						ephemeral: true
+					});
+					return;
+				}
+			} else if (question.type === "SINGLE_CHOICE") {
+				const correctChoices = question.choices.filter(
+					choice => choice.correct
+				);
+				if (correctChoices.length !== 1) {
+					await interaction.followUp({
+						content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-NOT-EXACTLY-1-CORRECT-SCQ-CHOICE`,
+						ephemeral: true
+					});
+					return;
+				}
+				if (question.choices.length < 2) {
+					await interaction.followUp({
+						content: `Something is wrong. Please contact a Professor for assistance.\nErrorCode: ERR-LESS-THAN-2-SCQ-CHOICES`,
+						ephemeral: true
+					});
+					return;
+				}
+			}
+		}
 
 		questions = questions.sort(() => Math.random() - 0.5).slice(0, 5);
+		const maxScore = questions.reduce(
+			(sum, question) =>
+				sum + question.choices.filter(choice => choice.correct).length,
+			0
+		);
+
+		await prisma.associatesResponses.update({
+			where: { id: response.id },
+			data: {
+				maxScore
+			}
+		});
 
 		for (const question of questions) {
 			question.choices = question.choices.sort(() => Math.random() - 0.5);

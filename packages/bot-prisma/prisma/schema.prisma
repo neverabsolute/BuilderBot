@@ -69,6 +69,7 @@ model AssociatesQuestionChoices {
 model AssociatesResponses {
   id         Int      @id @unique @default(autoincrement())
   score      Int
+  maxScore   Int      @default(0)
   answerDict Json     @default("{}")
   userId     BigInt
   channelId  BigInt
