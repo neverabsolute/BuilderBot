@@ -5,7 +5,7 @@ import { Discord, SelectMenuComponent } from "discordx";
 @Discord()
 export class HandleAssociateQuizQuestionSubmit {
 	@SelectMenuComponent({ id: "associateQuestion" })
-	async handle(interaction: StringSelectMenuInteraction): Promise<void> {
+	async handleSubmit(interaction: StringSelectMenuInteraction): Promise<void> {
 		await interaction.deferReply({ ephemeral: true });
 
 		const response = await prisma.associatesResponses.findFirst({

@@ -3,10 +3,27 @@ import { CommandInteraction, GuildMember } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
 import { upsertUser } from "../../common/util.js";
 
+const lastButtonClickTimestamps = new Map<string, number>();
+const rateLimitMillis = 5000;
+
 @Discord()
 export class HandleAssociateQuizStart {
 	@ButtonComponent({ id: "submit-associates-quiz" })
-	async handleStart(interaction: CommandInteraction) {
+	async handleFinish(interaction: CommandInteraction) {
+		const lastButtonClick = lastButtonClickTimestamps.get(interaction.user.id);
+		const currentTime = Date.now();
+
+		if (lastButtonClick && currentTime - lastButtonClick < rateLimitMillis) {
+			// Send a temporary error message or ignore the button event
+			await interaction.reply({
+				content: "Please wait before attempting to submit again.",
+				ephemeral: true
+			});
+			return;
+		}
+
+		// Update the user's timestamp
+		lastButtonClickTimestamps.set(interaction.user.id, currentTime);
 		await interaction.deferReply();
 		const member = interaction.member;
 
@@ -16,7 +33,7 @@ export class HandleAssociateQuizStart {
 		}
 
 		const discordUser = await upsertUser(member);
-		const response = await prisma.associatesResponses.findMany({
+		const response = await prisma.associatesResponses.findFirst({
 			where: {
 				userId: discordUser.id,
 				channelId: BigInt(interaction.channelId),
@@ -24,12 +41,15 @@ export class HandleAssociateQuizStart {
 			}
 		});
 
-		if (!response || response.length > 1) {
-			await interaction.followUp({
+		if (!response) {
+			const message = await interaction.followUp({
 				content:
-					"Looks like something went wrong, please reach out to a Professor for assistance.\nErrorCode: ERR-WRONG-NUMBER-RESPONSES-TO-GRADE",
+					"Looks like you've already finished the quiz. Please contact a Professor for assistance if you believe this is incorrect.",
 				ephemeral: true
 			});
+			setTimeout(() => {
+				message.delete().catch(() => {});
+			}, 5000);
 			return;
 		}
 
@@ -51,7 +71,7 @@ export class HandleAssociateQuizStart {
 			return;
 		}
 
-		const userAnswer = response[0].answerDict as Prisma.JsonArray;
+		const userAnswer = response.answerDict as Prisma.JsonArray;
 
 		let score = 0;
 
@@ -88,7 +108,7 @@ export class HandleAssociateQuizStart {
 			}
 		}
 
-		if (score === response[0].maxScore) {
+		if (score === response.maxScore) {
 			await interaction.followUp({
 				content:
 					"Congratulations! You passed the quiz! The Associate Degree has been awarded to you!",
@@ -122,7 +142,7 @@ export class HandleAssociateQuizStart {
 			}, 60000);
 		} else {
 			await interaction.followUp({
-				content: `Unfortunately you did not pass the quiz. You scored a ${score} out of ${response[0].maxScore}. You can retry in ${config.retryDelayDays} days.`,
+				content: `Unfortunately you did not pass the quiz. You scored a ${score} out of ${response.maxScore}. You can retry in ${config.retryDelayDays} days.`,
 				ephemeral: true
 			});
 			await interaction.channel?.send({
@@ -136,7 +156,7 @@ export class HandleAssociateQuizStart {
 
 		await prisma.associatesResponses.update({
 			where: {
-				id: response[0].id
+				id: response.id
 			},
 			data: {
 				finished: true,

@@ -264,7 +264,7 @@ export class HandleAssociateQuizStart {
 		const embed = new EmbedBuilder()
 			.setTitle("Submit!")
 			.setDescription(
-				"Once you have answered all questions, click the button below to submit your answers. There is no going back!"
+				`Best of luck <@${interaction.user.id}>!\n\nOnce you have answered all questions, click the button below to submit your answers. There is no going back!`
 			)
 			.setColor("Green");
 
