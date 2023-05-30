@@ -9,6 +9,7 @@
 ### Creating a Discord Bot
 
 - https://discord.dev
+- Enable all privileged intents
 - Copy the bot token to an environment variable called `BUILDER_BOT_TOKEN`
 
 ### Database setup
