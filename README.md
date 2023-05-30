@@ -6,16 +6,18 @@
 >
 > There is a great video for setting up and using WSL [here](https://www.youtube.com/watch?v=oF6gLyhQDdw).
 
-### Creating a Discord Bot
+### Creating a Discord bot
 
 - https://discord.dev
+- Enable all privileged intents
 - Copy the bot token to an environment variable called `BUILDER_BOT_TOKEN`
 
 ### Database setup
 
 - Install [PostgreSQL](https://www.postgresql.org/download/)
-- Create a database called `builderbot`
 - Create a user called `builderbot` with the password `builderbot`, make it superuser
+- Create a database called `builderbot` owned by the user `builderbot`
+- Copy the file `/packages/bot-prisma/.env.example` to `/packages/bot-prisma/.env`
 
 ### Installing NVM
 
@@ -24,6 +26,7 @@
 ### Installing Node.js
 
 ```bash
+nvm install 18
 nvm use 18
 ```
 
