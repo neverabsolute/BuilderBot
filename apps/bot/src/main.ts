@@ -4,6 +4,7 @@ import { Client } from "discordx";
 import "reflect-metadata";
 import { saveMessage, upsertUser } from "./common/util.js";
 import { BOT_TOKEN } from "./configs.js";
+import { initializeLoops } from "./loops/main.js";
 
 export const bot = new Client({
 	// To only use global commands (use @Guild for specific guild command), comment this line
@@ -68,3 +69,4 @@ async function run() {
 }
 
 run();
+await initializeLoops(bot);
