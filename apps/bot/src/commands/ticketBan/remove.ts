@@ -73,7 +73,7 @@ export class Remove {
 		}
 
 		await interaction.editReply({
-			content: "Ticket bans removed. The roles will be updated shortly."
+			content: "Any active ticket bans have been removed."
 		});
 	}
 }
