@@ -48,7 +48,6 @@ export class Remove {
 				},
 				data: {
 					active: false,
-					expiresAt: new Date(),
 					removedBy: BigInt(interaction.user.id)
 				}
 			});
