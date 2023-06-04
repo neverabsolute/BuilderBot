@@ -24,8 +24,7 @@ async function runTicketBanLoop(client: Client) {
 			where: {
 				expiresAt: {
 					lte: currentMinute
-				},
-				active: true
+				}
 			}
 		});
 
