@@ -1,11 +1,12 @@
-import {
-	CommandInteraction,
-	GuildMember,
-	ApplicationCommandOptionType
-} from "discord.js";
-import { Discord, Slash, SlashOption, SlashGroup } from "discordx";
 import { prisma } from "bot-prisma";
+import {
+	ApplicationCommandOptionType,
+	CommandInteraction,
+	GuildMember
+} from "discord.js";
+import { Discord, Slash, SlashGroup, SlashOption } from "discordx";
 import { upsertUser } from "../../common/util.js";
+import { TICKETBAN_ROLE_ID } from "../../configs.js";
 
 @Discord()
 @SlashGroup({ name: "ticketban", description: "Ticket ban commands" })
@@ -30,28 +31,49 @@ export class Remove {
 		const user = await upsertUser(member);
 		const ticketBans = await prisma.ticketBan.findMany({
 			where: {
-				userId: user.id
+				userId: user.id,
+                active: true
 			}
 		});
 
 		if (ticketBans.length === 0) {
-			await interaction.editReply("This user has no ticket bans.");
+			await interaction.editReply("This user has no active ticket bans.");
 			return;
 		}
 
 		for (const ticketBan of ticketBans) {
-            await prisma.ticketBan.update({
-                where: {
-                    id: ticketBan.id
-                },
-                data: {
-                    active: false,
-                    expiresAt: new Date(),
-                    removedBy: BigInt(interaction.user.id)
-                }
-            });
-        }
+			await prisma.ticketBan.update({
+				where: {
+					id: ticketBan.id
+				},
+				data: {
+					active: false,
+					expiresAt: new Date(),
+					removedBy: BigInt(interaction.user.id)
+				}
+			});
 
-		await interaction.editReply({ content: "Ticket bans removed. The roles will be updated shortly." });
+			await interaction.guild?.members
+				.fetch(String(user.id))
+				.then(async member => {
+					if (!member) {
+						return;
+					}
+
+					const ticketBanRole = interaction.guild?.roles.cache.get(
+						`${TICKETBAN_ROLE_ID}`
+					);
+
+					if (!ticketBanRole) {
+						throw new Error("Ticket ban role not found");
+					}
+
+					await member.roles.remove(ticketBanRole).catch(() => {});
+				});
+		}
+
+		await interaction.editReply({
+			content: "Ticket bans removed. The roles will be updated shortly."
+		});
 	}
 }
