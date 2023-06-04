@@ -25,7 +25,8 @@ model TicketBan {
   id        Int      @id @unique @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    BigInt
-  staffId   BigInt
+  givenBy   BigInt
+  removedBy BigInt?
   reason    String
   active    Boolean  @default(true)
   expiresAt DateTime

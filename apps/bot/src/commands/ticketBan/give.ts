@@ -48,6 +48,11 @@ export class Give {
 			return;
 		}
 
+		if (member.user.bot) {
+			await interaction.editReply("Cannot ticket ban a bot.");
+			return;
+		}
+
 		const user = await upsertUser(member);
 		const ticketBanRole = interaction.guild.roles.cache.get(TICKETBAN_ROLE_ID);
 		const banExpiresAt = new Date();
@@ -92,7 +97,7 @@ export class Give {
 				},
 				reason: reason,
 				expiresAt: banExpiresAt,
-				staffId: BigInt(interaction.user.id)
+				givenBy: BigInt(interaction.user.id)
 			}
 		});
 

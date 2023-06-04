@@ -26,35 +26,64 @@ export class Info {
 		member: GuildMember,
 		interaction: CommandInteraction
 	) {
-		await interaction.deferReply({ ephemeral: true });
+		await interaction.deferReply();
 
 		const user = await upsertUser(member);
 		const ticketBans = await prisma.ticketBan.findMany({
 			where: {
 				userId: user.id
-			}
+			},
+			orderBy: {
+				updatedAt: "desc"
+			},
+			take: 10
 		});
 
 		if (ticketBans.length === 0) {
-			await interaction.editReply("This user has no ticket bans.");
+			const message = await interaction.editReply(
+				"This user has no ticket bans."
+			);
+			setTimeout(() => {
+				message.delete();
+			}, 5000);
 			return;
 		}
 
-		const embed = new EmbedBuilder()
-			.setTitle(`${member.user.tag}'s ticket bans`)
-			.setColor("Red");
+		const embeds = [];
 
 		for (const ticketBan of ticketBans) {
-			embed.addFields({
-				name: `Ticket ban #${ticketBan.id}`,
-				value: `**Reason:** ${
-					ticketBan.reason
-				}\n**Banned until:** <t:${Math.floor(
-					ticketBan.expiresAt.getTime() / 1000
-				)}:f>\n**Banned by:** <@${ticketBan.staffId}>`
-			});
+			const embed = new EmbedBuilder()
+				.setTitle(`Ticket ban #${ticketBan.id}`)
+				.setColor("Red");
+			embed.addFields(
+				{
+					name: "Reason",
+					value: ticketBan.reason
+				},
+				{
+					name: "Active?",
+					value: ticketBan.active ? "Yes" : "No"
+				},
+				{
+					name: "Expires at",
+					value: `<t:${Math.floor(ticketBan.expiresAt.getTime() / 1000)}:f>`
+				},
+				{
+					name: "Given by",
+					value: `<@${ticketBan.givenBy}>`
+				}
+			);
+			if (ticketBan.removedBy) {
+				embed.addFields({
+					name: "Removed by",
+					value: `<@${ticketBan.removedBy}>`
+				});
+			}
+			embeds.push(embed.toJSON());
 		}
 
-		await interaction.editReply({ embeds: [embed] });
+		await interaction.editReply({
+			embeds
+		});
 	}
 }
