@@ -10,7 +10,7 @@ import {
 	StringSelectMenuOptionBuilder
 } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
-import { upsertUser } from "../../common/util.js";
+import { upsertUser } from "../../../common/util.js";
 
 const alphabet = new Map([
 	[0, "A"],
@@ -54,9 +54,9 @@ export class HandleAssociateQuizStart {
 		}
 
 		const discordUser = await upsertUser(member);
-		const numDaysAgo = await prisma.associatesConfiguration
-			.findFirst({})
-			.then(config => config?.retryDelayDays ?? 5);
+		const config = await prisma.associatesConfiguration.findFirst({});
+		const numDaysAgo = config?.retryDelayDays || 7;
+		const numQuestions = config?.numQuestions || 5;
 		const associatesResponses = await prisma.associatesResponses.findMany({
 			where: {
 				userId: discordUser.id,
@@ -205,7 +205,9 @@ export class HandleAssociateQuizStart {
 			}
 		}
 
-		questions = questions.sort(() => Math.random() - 0.5).slice(0, 5);
+		questions = questions
+			.sort(() => Math.random() - 0.5)
+			.slice(0, numQuestions);
 		const maxScore = questions.reduce(
 			(sum, question) =>
 				sum + question.choices.filter(choice => choice.correct).length,
@@ -247,11 +249,17 @@ export class HandleAssociateQuizStart {
 			);
 
 			const embed = new EmbedBuilder()
-				.setTitle(question.question)
+				.setTitle(
+					`
+					${question.type === "MULTIPLE_CHOICE" ? "Multiple" : "Single"} Choice Question
+					`
+				)
 				.setDescription(
-					question.choices
+					`
+					**${question.question}**\n\n${question.choices
 						.map((choice, index) => `${alphabet.get(index)}: ${choice.choice}`)
-						.join("\n")
+						.join("\n")}
+					`
 				)
 				.setColor("Green");
 
@@ -284,5 +292,27 @@ export class HandleAssociateQuizStart {
 				}
 			]
 		});
+
+		setTimeout(async () => {
+			await interaction.channel
+				?.send({
+					content: `You have 5 minutes remaining to complete the quiz <@${interaction.user.id}>!`
+				})
+				.catch(() => {});
+		}, 3300000);
+		// 55 minutes
+
+		setTimeout(async () => {
+			await interaction.channel
+				?.send({
+					content: `You have 1 minute remaining to complete the quiz <@${interaction.user.id}>!`
+				})
+				.catch(() => {});
+		}, 3540000);
+		// 59 minutes
+
+		setTimeout(async () => {
+			await interaction.channel?.delete().catch(() => {});
+		}, 3600000);
 	}
 }

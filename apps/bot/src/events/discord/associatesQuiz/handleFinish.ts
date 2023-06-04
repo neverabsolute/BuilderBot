@@ -1,7 +1,7 @@
 import { Prisma, prisma } from "bot-prisma";
 import { CommandInteraction, GuildMember } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
-import { upsertUser } from "../../common/util.js";
+import { upsertUser } from "../../../common/util.js";
 
 const lastButtonClickTimestamps = new Map<string, number>();
 const rateLimitMillis = 5000;
@@ -44,8 +44,7 @@ export class HandleAssociateQuizStart {
 		if (!response) {
 			const message = await interaction.followUp({
 				content:
-					"Looks like you've already finished the quiz. Please contact a Professor for assistance if you believe this is incorrect.",
-				ephemeral: true
+					"Looks like you've already finished the quiz. Please contact a Professor for assistance if you believe this is incorrect."
 			});
 			setTimeout(() => {
 				message.delete().catch(() => {});
@@ -65,13 +64,23 @@ export class HandleAssociateQuizStart {
 		if (!quiz || !config || !questions || !config.associatesRoleId) {
 			await interaction.followUp({
 				content:
-					"Looks like something went wrong, please reach out to a Professor for assistance.\nErrorCode: ERR-NOTHING-TO-GRADE-AGAINST",
-				ephemeral: true
+					"Looks like something went wrong, please reach out to a Professor for assistance.\nErrorCode: ERR-NOTHING-TO-GRADE-AGAINST"
 			});
 			return;
 		}
 
 		const userAnswer = response.answerDict as Prisma.JsonArray;
+
+		if (Object.keys(userAnswer).length < config.numQuestions) {
+			const message = await interaction.followUp({
+				content:
+					"You have not answered all the questions. Please answer all the questions before submitting."
+			});
+			setTimeout(() => {
+				message.delete().catch(() => {});
+			}, 5000);
+			return;
+		}
 
 		let score = 0;
 

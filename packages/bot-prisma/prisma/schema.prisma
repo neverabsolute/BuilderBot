@@ -45,6 +45,7 @@ model Message {
 
 model AssociatesConfiguration {
   id               Int     @id @unique @default(autoincrement())
+  numQuestions     Int     @default(5)
   categoryId       BigInt?
   associatesRoleId BigInt?
   retryDelayDays   Int?
