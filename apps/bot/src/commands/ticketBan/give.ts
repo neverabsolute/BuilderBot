@@ -65,7 +65,8 @@ export class Give {
 
 		const existingTicketBan = await prisma.ticketBan.findFirst({
 			where: {
-				userId: user.id
+				userId: user.id,
+				active: true
 			},
 			orderBy: {
 				createdAt: "desc"

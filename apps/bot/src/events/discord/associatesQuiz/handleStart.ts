@@ -80,6 +80,29 @@ export class HandleAssociateQuizStart {
 			return;
 		}
 
+		// if user account is not at least a month old, don't let them take the quiz
+		const requiredAccountAge = new Date();
+		requiredAccountAge.setMonth(requiredAccountAge.getMonth() - 1);
+
+		const guildMember = await interaction.guild?.members.fetch(String(discordUser.id)).catch(() => {});
+		if (!guildMember) {
+			await interaction.editReply({
+				content:
+					"Something went wrong. Please try again later."
+			});
+			return;
+		}
+		if (guildMember.user.createdAt > requiredAccountAge) {
+			await interaction.editReply({
+				content:
+					"Your account must be at least a month old to take the quiz. Please try again later. This channel will be deleted in 60 seconds."
+			});
+			setTimeout(() => {
+				interaction.channel?.delete().catch(() => {});
+			}, 60000);
+			return;
+		}
+
 		if (
 			associatesResponses.some(response => {
 				const daysAgo = new Date();
