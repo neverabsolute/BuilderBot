@@ -59,6 +59,10 @@ export class AssociatesAttempts {
 				.setColor("Red");
 			embed.addFields(
 				{
+					name: "User",
+					value: `<@${attempt.userId}>`
+				},
+				{
 					name: "Started at",
 					value: `<t:${Math.floor(attempt.createdAt.getTime() / 1000)}:f>`
 				},
