@@ -31,7 +31,7 @@ export class HandleMemberJoin {
 		}
 
 		if (rolesToAdd.length > 0) {
-			await member.roles.add(rolesToAdd, "Restoring member roles");
+			await member.roles.add(rolesToAdd, "Restoring member roles").catch(() => {});
 		}
 	}
 }

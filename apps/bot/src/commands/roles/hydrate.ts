@@ -71,6 +71,23 @@ Updating user to role mappings: ❔`
 				id: BigInt(role.id)
 			}));
 
+			for (const role of userRoles) {
+				if (
+					!(await prisma.roles.findFirst({
+						where: {
+							id: role.id
+						}
+					}))
+				) {
+					await prisma.roles.create({
+						data: {
+							id: role.id,
+							name: roles.get(String(role.id))!.name
+						}
+					});
+				}
+			}
+
 			await prisma.user.update({
 				where: {
 					id: user.id
