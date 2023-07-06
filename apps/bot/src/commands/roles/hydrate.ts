@@ -1,41 +1,37 @@
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { Discord, Slash, SlashGroup } from "discordx";
+import { upsertUser } from "../../common/util.js";
 import { prisma } from "bot-prisma";
 
 @Discord()
-@SlashGroup({ name: "role", description: "Role commands" })
-@SlashGroup("role")
+@SlashGroup({ name: "roles", description: "Role commands" })
+@SlashGroup("roles")
 export class HydrateRoles {
 	@Slash({
 		name: "hydrate",
 		description:
-			"Hydrate the roles table (this will be very slow, use with caution)"
+			"Hydrate the roles table (this will be very slow, do not use unless jackson tells you to)"
 	})
 	async hydrateRoles(interaction: CommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 
 		const roles = await interaction.guild!.roles.fetch();
 		const roleIds = roles.map(role => role.id);
-		const roles_ = await prisma.roles.findMany({
-			where: {
-				id: {
-					in: roleIds.map(id => BigInt(id))
-				}
-			}
-		});
+		const roles_ = await prisma.roles.findMany({});
 
 		const rolesToCreate = roleIds.filter(
 			id => !roles_.find(role => role.id === BigInt(id))
 		);
 		const rolesToDelete = roles_.filter(
-            role => !roleIds.find(id => role.id === BigInt(id))
-        );
+			role => !roleIds.includes(String(role.id))
+		);
 
 		const embed = new EmbedBuilder()
 			.setTitle("Hydrating database")
 			.setColor("Green")
 			.setDescription(
-				`Creating ${rolesToCreate.length} roles and deleting ${rolesToDelete.length} roles.`
+				`Updating ${rolesToCreate.length + rolesToDelete.length} roles: ❔
+Updating user to role mappings: ❔`
 			);
 		await interaction.editReply({
 			embeds: [embed]
@@ -62,10 +58,41 @@ export class HydrateRoles {
 			.setTitle("Hydrating database")
 			.setColor("Green")
 			.setDescription(
-				`Created ${rolesToCreate.length} roles and deleted ${rolesToDelete.length} roles.`
+				`Updating ${rolesToCreate.length + rolesToDelete.length} roles: ✅
+Updating user to role mappings: ❔`
 			);
 		await interaction.editReply({
 			embeds: [embed2]
+		});
+
+		for (const member of (await interaction.guild!.members.fetch()).values()) {
+			const user = await upsertUser(member);
+			const userRoles = member.roles.cache.map(role => ({
+				id: BigInt(role.id)
+			}));
+
+			await prisma.user.update({
+				where: {
+					id: user.id
+				},
+				data: {
+					roles: {
+						set: userRoles
+					}
+				}
+			});
+		}
+
+		const embed3 = new EmbedBuilder()
+			.setTitle("Hydrating database")
+			.setColor("Green")
+			.setDescription(
+				`Updating ${rolesToCreate.length + rolesToDelete.length} roles: ✅
+Updating user to role mappings: ✅`
+			);
+
+		await interaction.editReply({
+			embeds: [embed3]
 		});
 	}
 }

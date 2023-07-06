@@ -8,8 +8,8 @@ import { Discord, Slash, SlashOption, SlashGroup } from "discordx";
 import { prisma } from "bot-prisma";
 
 @Discord()
-@SlashGroup({ name: "role", description: "Role commands" })
-@SlashGroup("role")
+@SlashGroup({ name: "roles", description: "Role commands" })
+@SlashGroup("roles")
 export class AddRolePersist {
 	@Slash({
 		name: "persist-remove",

@@ -37,19 +37,13 @@ bot.once("ready", async () => {
 		if (!guild.available || !(guild.id === GUILD_ID)) continue;
 		const roles = await guild.roles.fetch();
 		const roleIds = roles.map(role => role.id);
-		const roles_ = await prisma.roles.findMany({
-			where: {
-				id: {
-					in: roleIds.map(id => BigInt(id))
-				}
-			}
-		});
+		const roles_ = await prisma.roles.findMany({});
 
 		const rolesToCreate = roleIds.filter(
 			id => !roles_.find(role => role.id === BigInt(id))
 		);
 		const rolesToDelete = roles_.filter(
-			role => !roleIds.find(id => role.id === BigInt(id))
+			role => !roleIds.includes(String(role.id))
 		);
 
 		console.log(
