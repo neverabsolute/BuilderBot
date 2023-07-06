@@ -17,6 +17,7 @@ model User {
   nickname       String?
   joinedServerAt DateTime?
   messages       Message[]
+  roles          Roles[]
   responses      AssociatesResponses[]
   ticketBans     TicketBan[]
 }
@@ -92,4 +93,11 @@ model AssociatesResponses {
   user       User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model Roles {
+  id       BigInt  @id @unique
+  name     String
+  users    User[]
+  persists Boolean @default(false)
 }

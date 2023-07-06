@@ -1,5 +1,5 @@
 import { prisma } from "bot-prisma";
-import { GuildMember, Message } from "discord.js";
+import { GuildMember, Message, Role } from "discord.js";
 
 export async function upsertUser(member: GuildMember) {
 	return await prisma.user.upsert({
@@ -35,6 +35,21 @@ export async function saveMessage(message: Message) {
 					id: BigInt(message.author.id)
 				}
 			}
+		}
+	});
+}
+
+export async function upsertRole(role: Role) {
+	await prisma.roles.upsert({
+		where: {
+			id: BigInt(role.id)
+		},
+		update: {
+			name: role.name,
+		},
+		create: {
+			id: BigInt(role.id),
+			name: role.name,
 		}
 	});
 }

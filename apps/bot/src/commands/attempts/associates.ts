@@ -16,7 +16,7 @@ export class AssociatesAttempts {
 		name: "associates",
 		description: "Get information about a user's associates attempts"
 	})
-	async whois(
+	async associatesAttempts(
 		@SlashOption({
 			name: "user",
 			description: "User to inquire about",
