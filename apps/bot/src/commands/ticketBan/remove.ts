@@ -32,7 +32,7 @@ export class Remove {
 		const ticketBans = await prisma.ticketBan.findMany({
 			where: {
 				userId: user.id,
-                active: true
+				active: true
 			}
 		});
 

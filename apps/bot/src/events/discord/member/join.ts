@@ -23,15 +23,15 @@ export class HandleMemberJoin {
 		const roles = userRoles
 			.map(role => member.guild.roles.cache.get(String(role)))
 			.filter(role => role);
-        const rolesToAdd = []
+		const rolesToAdd = [];
 
 		for (const role of roles) {
 			if (!role || member.roles.cache.has(role.id)) continue;
 			rolesToAdd.push(role);
 		}
 
-        if (rolesToAdd.length > 0) {
-            await member.roles.add(rolesToAdd, "Restoring member roles");
-        }
+		if (rolesToAdd.length > 0) {
+			await member.roles.add(rolesToAdd, "Restoring member roles");
+		}
 	}
 }

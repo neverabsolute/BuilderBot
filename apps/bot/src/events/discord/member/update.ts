@@ -7,21 +7,21 @@ import { upsertUser } from "../../../common/util.js";
 export class HandleMemberUpdate {
 	@On()
 	async guildMemberUpdate([, member]: ArgsOf<"guildMemberUpdate">) {
-        if (!member.guild.available || member?.user?.bot) return;
-        const user = await upsertUser(member);
-        const userRoles = member.roles.cache.map(role => ({
-            id: BigInt(role.id)
-        }));
+		if (!member.guild.available || member?.user?.bot) return;
+		const user = await upsertUser(member);
+		const userRoles = member.roles.cache.map(role => ({
+			id: BigInt(role.id)
+		}));
 
-        await prisma.user.update({
-            where: {
-                id: user.id
-            },
-            data: {
-                roles: {
-                    set: userRoles
-                }
-            }
-        });
+		await prisma.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				roles: {
+					set: userRoles
+				}
+			}
+		});
 	}
 }

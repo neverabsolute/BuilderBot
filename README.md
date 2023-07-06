@@ -51,6 +51,7 @@ pnpm dev
 ## Development
 
 The bot looks for a couple things to run:
+
 - a `GUILD_ID` environment variable, this is what guild the bot looks in while running the various loops it has
 - a `BUILDER_BOT_TOKEN` environment variable, this is the token for the bot to use to connect to Discord
 - a `TICKETBAN_ROLE_ID` environment variable, this is the role id for the role that is banned from creating tickets

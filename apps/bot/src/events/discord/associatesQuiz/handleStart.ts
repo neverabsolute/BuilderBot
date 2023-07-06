@@ -84,11 +84,12 @@ export class HandleAssociateQuizStart {
 		const requiredAccountAge = new Date();
 		requiredAccountAge.setMonth(requiredAccountAge.getMonth() - 1);
 
-		const guildMember = await interaction.guild?.members.fetch(String(discordUser.id)).catch(() => {});
+		const guildMember = await interaction.guild?.members
+			.fetch(String(discordUser.id))
+			.catch(() => {});
 		if (!guildMember) {
 			await interaction.editReply({
-				content:
-					"Something went wrong. Please try again later."
+				content: "Something went wrong. Please try again later."
 			});
 			return;
 		}

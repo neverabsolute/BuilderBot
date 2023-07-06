@@ -6,12 +6,14 @@ import { Discord, On } from "discordx";
 export class HandleRoleDelete {
 	@On()
 	async roleDelete([role]: ArgsOf<"roleDelete">) {
-		await prisma.roles.delete({
-            where: {
-                id: BigInt(role.id)
-            }
-        }).catch(() => {});
+		await prisma.roles
+			.delete({
+				where: {
+					id: BigInt(role.id)
+				}
+			})
+			.catch(() => {});
 
-        console.log(`Deleted role ${role.name} (${role.id})`);
+		console.log(`Deleted role ${role.name} (${role.id})`);
 	}
 }
