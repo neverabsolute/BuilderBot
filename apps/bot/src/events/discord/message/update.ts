@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder, GuildMember, Message } from "discord.js";
 import type { ArgsOf } from "discordx";
 import { Discord, On } from "discordx";
 import { AUTOMOD_CHANNEL_ID } from "../../../configs.js";
@@ -11,6 +11,20 @@ export class HandleMessageUpdate {
 			return;
 
 		if (oldMessage.author.bot || newMessage.author.bot) return;
+
+		const discordian = newMessage.member;
+
+		if (!discordian || !(discordian instanceof GuildMember)) {
+			return;
+		}
+
+		if (
+			discordian.permissions.has("ManageGuild") ||
+			discordian.permissions.has("Administrator") ||
+			discordian.permissions.has("ManageMessages")
+		) {
+			return;
+		}
 
 		if (
 			(oldMessage.content.includes("https://") ||
