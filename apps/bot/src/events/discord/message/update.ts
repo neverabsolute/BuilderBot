@@ -10,6 +10,8 @@ export class HandleMessageUpdate {
 		if (!(oldMessage instanceof Message) || !(newMessage instanceof Message))
 			return;
 
+		if (oldMessage.author.bot || newMessage.author.bot) return;
+
 		if (
 			(oldMessage.content.includes("https://") ||
 				oldMessage.content.includes("http://")) &&
