@@ -8,7 +8,7 @@ export class HandleMessageUpdate {
 	@On()
 	async messageUpdate([oldMessage, newMessage]: ArgsOf<"messageUpdate">) {
 		if (!(oldMessage instanceof Message) || !(newMessage instanceof Message))
-			return;
+			return console.log("not a message");
 
 		if (oldMessage.author.bot || newMessage.author.bot) return;
 
@@ -26,12 +26,19 @@ export class HandleMessageUpdate {
 			return;
 		}
 
+		const regex = /(https?:\/\/[^\s]+)/g;
+		const oldUrls = (oldMessage.content.match(regex) || []).map(
+			url => new URL(url).href
+		);
+		const newUrls = (newMessage.content.match(regex) || []).map(
+			url => new URL(url).href
+		);
+
+		console.log(oldUrls, newUrls);
+
 		if (
-			(oldMessage.content.includes("https://") ||
-				oldMessage.content.includes("http://")) &&
-			(newMessage.content.includes("https://") ||
-				newMessage.content.includes("http://")) &&
-			oldMessage.content !== newMessage.content
+			!newUrls.every(val => oldUrls.includes(val)) ||
+			oldUrls.length !== newUrls.length
 		) {
 			await newMessage.delete().catch(() => null);
 			const channel = await newMessage.guild?.channels.fetch(
