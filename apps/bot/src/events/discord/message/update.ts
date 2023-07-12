@@ -8,7 +8,7 @@ export class HandleMessageUpdate {
 	@On()
 	async messageUpdate([oldMessage, newMessage]: ArgsOf<"messageUpdate">) {
 		if (!(oldMessage instanceof Message) || !(newMessage instanceof Message))
-			return console.log("not a message");
+			return;
 
 		if (oldMessage.author.bot || newMessage.author.bot) return;
 
@@ -33,8 +33,6 @@ export class HandleMessageUpdate {
 		const newUrls = (newMessage.content.match(regex) || []).map(
 			url => new URL(url).href
 		);
-
-		console.log(oldUrls, newUrls);
 
 		if (
 			!newUrls.every(val => oldUrls.includes(val)) ||
