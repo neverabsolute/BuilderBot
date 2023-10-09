@@ -14,25 +14,25 @@
 		"lint": "eslint . --ext .ts"
 	},
 	"dependencies": {
-		"@discordx/importer": "^1.2.1",
+		"@discordx/importer": "^1.2.3",
 		"@discordx/pagination": "^3.4.1",
 		"@discordx/utilities": "^5.2.1",
 		"bot-prisma": "workspace:*",
-		"discord.js": "^14.8.0",
-		"discordx": "^11.7.4",
+		"discord.js": "^14.13.0",
+		"discordx": "^11.7.6",
 		"reflect-metadata": "^0.1.13"
 	},
 	"devDependencies": {
-		"@types/node": "^18.7.14",
-		"@typescript-eslint/eslint-plugin": "^5.38.0",
-		"@typescript-eslint/parser": "^5.38.0",
+		"@types/node": "^20.8.3",
+		"@typescript-eslint/eslint-plugin": "^6.7.4",
+		"@typescript-eslint/parser": "^6.7.4",
 		"copyfiles": "^2.4.1",
-		"eslint": "^8.23.1",
-		"nodemon": "^2.0.19",
-		"prettier": "^2.7.1",
+		"eslint": "^8.51.0",
+		"nodemon": "^3.0.1",
+		"prettier": "^3.0.3",
 		"ts-node": "^10.9.1",
-		"tsc-watch": "^6.0.0",
-		"typescript": "4.8.2"
+		"tsc-watch": "^6.0.4",
+		"typescript": "5.2.2"
 	},
 	"engines": {
 		"node": ">=18.0.0"

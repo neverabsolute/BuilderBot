@@ -12,8 +12,3 @@ export const GUILD_ID = process.env.GUILD_ID!;
 if (!GUILD_ID) {
 	throw new Error("GUILD_ID is not set");
 }
-
-export const AUTOMOD_CHANNEL_ID = process.env.AUTOMOD_CHANNEL_ID!;
-if (!AUTOMOD_CHANNEL_ID) {
-	throw new Error("AUTOMOD_CHANNEL_ID is not set");
-}
