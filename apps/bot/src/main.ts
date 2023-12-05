@@ -70,6 +70,28 @@ bot.once("ready", async () => {
 		console.log(
 			`Created ${rolesToCreate.length} roles and deleted ${rolesToDelete.length} roles.`
 		);
+
+		const channels = await guild.channels.fetch();
+		const unknownChannels = await prisma.channel.findMany({
+			where: {
+				name: "unknown",
+				guildId: -1
+			}
+		});
+
+		for (const channel of unknownChannels) {
+			if (channels.has(String(channel.id))) {
+				await prisma.channel.update({
+					where: {
+						id: channel.id
+					},
+					data: {
+						name: channels.get(String(channel.id))!.name,
+						guildId: BigInt(GUILD_ID)
+					}
+				});
+			}
+		}
 	}
 
 	console.log("Bot started");
