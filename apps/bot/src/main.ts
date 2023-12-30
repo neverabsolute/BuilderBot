@@ -8,11 +8,6 @@ import { BOT_TOKEN, GUILD_ID } from "./configs.js";
 import { initializeLoops } from "./loops/main.js";
 
 export const bot = new Client({
-	// To only use global commands (use @Guild for specific guild command), comment this line
-	// botGuilds: process.env.PRODUCTION
-	// 	? undefined
-	// 	: [client => client.guilds.cache.map(guild => guild.id)],
-
 	// Discord intents
 	intents: [
 		IntentsBitField.Flags.Guilds,
@@ -74,7 +69,7 @@ bot.once("ready", async () => {
 		const channels = await guild.channels.fetch();
 		const unknownChannels = await prisma.channel.findMany({
 			where: {
-				name: "unknown",
+				name: "deleted-channel",
 				guildId: -1
 			}
 		});

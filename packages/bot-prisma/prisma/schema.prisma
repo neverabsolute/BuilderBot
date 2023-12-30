@@ -11,15 +11,17 @@ datasource db {
 }
 
 model User {
-  id             BigInt                @id @unique
-  username       String?
-  discriminator  Int?
-  nickname       String?
-  joinedServerAt DateTime?
-  messages       Message[]
-  roles          Roles[]
-  responses      AssociatesResponses[]
-  ticketBans     TicketBan[]
+  id              BigInt                @id @unique
+  username        String?
+  discriminator   Int?
+  nickname        String?
+  joinedServerAt  DateTime?
+  messages        Message[]
+  roles           Roles[]
+  responses       AssociatesResponses[]
+  ticketBans      TicketBan[]
+  degreesGiven    DegreeChanges[]       @relation("DegreesGiven")
+  degreesReceived DegreeChanges[]       @relation("DegreesReceived")
 }
 
 model TicketBan {
@@ -110,4 +112,26 @@ model Channel {
   messages  Message[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+enum Degrees {
+  BACHELORS
+  MASTERS
+}
+
+enum Actions {
+  ADD
+  REMOVE
+}
+
+model DegreeChanges {
+  id        Int      @id @unique @default(autoincrement())
+  action    Actions
+  degree    Degrees
+  from      User     @relation(fields: [fromId], references: [id], name: "DegreesGiven")
+  fromId    BigInt
+  to        User     @relation(fields: [toId], references: [id], name: "DegreesReceived")
+  toId      BigInt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
