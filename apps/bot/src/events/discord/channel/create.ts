@@ -1,13 +1,48 @@
 import { prisma } from "bot-prisma";
 import type { ArgsOf } from "discordx";
 import { Discord, On } from "discordx";
-import { ButtonStyle, ComponentType, EmbedBuilder } from "discord.js";
+import {
+	ButtonStyle,
+	ComponentType,
+	EmbedBuilder,
+	AttachmentBuilder
+} from "discord.js";
+import { BACH_CATEGORY_ID } from "../../../configs.js";
+
+const bachQuestions = `
+> Please keep your answers organized and easy to read.
+1. Name 1 or more methods you use to make peeks more advantageous for the defender.
+2. What is a problem you saw in a base of yours recently? How did you fix it?
+3. What are 3 things you do to improve QoL in your bases?
+4. Describe 3 things you'd change to improve the base in this screenshot below:
+`;
 
 @Discord()
 export class HandleChannelCreate {
 	@On()
 	async channelCreate([channel]: ArgsOf<"channelCreate">) {
 		if (!channel.guild || !channel.isTextBased() || !channel.parentId) return;
+
+		if (channel.parentId === BACH_CATEGORY_ID) {
+			const bachEmbed = new EmbedBuilder()
+				.setTitle("Building Bulletin Bachelors Degree Quiz")
+				.setDescription(bachQuestions)
+				.setColor("Green");
+
+			const bachAttachment = new AttachmentBuilder(
+				"https://i.imgur.com/LETehZQ.jpeg"
+			);
+
+			await new Promise(resolve => setTimeout(resolve, 5000));
+
+			await channel.send({
+				embeds: [bachEmbed]
+			});
+
+			await channel.send({
+				files: [bachAttachment]
+			});
+		}
 
 		const associatesCategoryId = await prisma.associatesConfiguration
 			.findFirst({})

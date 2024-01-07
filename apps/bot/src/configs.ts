@@ -36,3 +36,5 @@ export const DEGREES: Record<string, D> = {
 		previous: "Bachelors"
 	}
 };
+
+export const BACH_CATEGORY_ID = "872616925409214495";

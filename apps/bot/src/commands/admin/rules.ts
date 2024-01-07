@@ -20,7 +20,9 @@ const rulesMessageText = `1. Leave your ego at the door.
 
 9. If posting someone else's build, credit when applicable.
 
-10. Follow Discord's [terms of service](https://discord.com/terms).`;
+10. Follow Discord's [terms of service](https://discord.com/terms).
+
+> If you have any questions or would like to appeal a ban or restriction, please use <#1137557514221789224>`;
 
 const rulesMessageFooter =
 	"Rules may be modified or enforced at staff discretion. Please do not try to argue about decisions made by staff.";
@@ -47,7 +49,7 @@ export class Rules {
 		}
 
 		const rulesEmbed = new EmbedBuilder()
-			.setTitle("📜 Rules")
+			.setTitle("`📜` Rules")
 			.setDescription(rulesMessageText)
 			.setColor("#4e598c");
 
