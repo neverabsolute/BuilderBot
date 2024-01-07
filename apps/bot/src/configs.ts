@@ -20,10 +20,15 @@ type D = {
 };
 
 export const DEGREES: Record<string, D> = {
+	enthusiast: {
+		id: "636796408623792138",
+		name: "Enthusiast",
+		previous: null
+	},
 	associates: {
 		id: "1193303199394832516",
 		name: "Associates",
-		previous: null
+		previous: "Enthusiast"
 	},
 	bachelors: {
 		id: "1193303225990926460",

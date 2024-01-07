@@ -2,6 +2,7 @@ import { Prisma, prisma } from "bot-prisma";
 import { CommandInteraction, GuildMember } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
 import { upsertUser } from "../../../common/util.js";
+import { DEGREES } from "../../../configs.js";
 
 const lastButtonClickTimestamps = new Map<string, number>();
 const rateLimitMillis = 5000;
@@ -118,6 +119,24 @@ export class HandleAssociateQuizStart {
 		}
 
 		if (score === response.maxScore) {
+			const enthusiastRoleId = DEGREES.enthusiast.id;
+			const enthusiastRole = await interaction.guild?.roles.fetch(
+				String(enthusiastRoleId)
+			);
+
+			if (!enthusiastRole) {
+				await interaction.followUp({
+					content:
+						"Unfortunately the Enthusiast Degree role could not be found. Please contact a Professor for assistance.",
+					ephemeral: true
+				});
+				return;
+			}
+
+			await member.roles.remove(enthusiastRole).catch(err => {
+				console.error(err);
+			});
+
 			await interaction.followUp({
 				content:
 					"Congratulations! You passed the quiz! The Associate Degree has been awarded to you!",
