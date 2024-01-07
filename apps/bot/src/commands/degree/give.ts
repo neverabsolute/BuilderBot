@@ -5,26 +5,9 @@ import {
 	GuildMember,
 	AutocompleteInteraction
 } from "discord.js";
-import { DEGREE_MAP } from "../../configs.js";
 import { Discord, Slash, SlashOption, SlashGroup } from "discordx";
-import { prisma } from "bot-prisma";
-
-interface Autocomplete {
-	value: string;
-	name: string;
-}
-
-async function filterForDegrees(value: string) {
-	const autocomplete: Autocomplete[] = [];
-
-	for (const [name, id] of DEGREE_MAP) {
-		if (name.toLowerCase().includes(value.toLowerCase())) {
-			autocomplete.push({ name, value: id });
-		}
-	}
-
-	return autocomplete;
-}
+import { Degrees, prisma } from "bot-prisma";
+import { filterForDegrees, getDegreeById, getDegreeByName } from "./common.js";
 
 @Discord()
 @SlashGroup({ name: "degree", description: "Degree commands" })
@@ -68,12 +51,25 @@ export class GiveDegree {
 			});
 		}
 
-		const role = interaction.guild.roles.cache.get(degree);
+		const degree_ = getDegreeById(degree);
+
+		if (!degree_) {
+			const embed = new EmbedBuilder()
+				.setTitle("Error")
+				.setDescription("Could not find the degree")
+				.setColor("Red");
+
+			return await interaction.editReply({
+				embeds: [embed]
+			});
+		}
+
+		const role = interaction.guild.roles.cache.get(degree_.id);
 
 		if (!role) {
 			const embed = new EmbedBuilder()
 				.setTitle("Error")
-				.setDescription("Invalid degree")
+				.setDescription("Could not find the degree role")
 				.setColor("Red");
 
 			return await interaction.editReply({
@@ -90,6 +86,36 @@ export class GiveDegree {
 			return await interaction.editReply({
 				embeds: [embed]
 			});
+		}
+
+		if (degree_.previous) {
+			const previousDegree = getDegreeByName(degree_.previous);
+
+			if (!previousDegree) {
+				const embed = new EmbedBuilder()
+					.setTitle("Error")
+					.setDescription("Could not find the previous degree")
+					.setColor("Red");
+
+				return await interaction.editReply({
+					embeds: [embed]
+				});
+			}
+
+			const previousRole = interaction.guild.roles.cache.get(previousDegree.id);
+
+			if (!previousRole) {
+				const embed = new EmbedBuilder()
+					.setTitle("Error")
+					.setDescription("Could not find the previous degree role")
+					.setColor("Red");
+
+				return await interaction.editReply({
+					embeds: [embed]
+				});
+			}
+
+			await user.roles.remove(previousRole).catch(() => {});
 		}
 
 		await user.roles.add(role).catch(async () => {
@@ -116,7 +142,7 @@ export class GiveDegree {
 					}
 				},
 				action: "ADD",
-				degree: "923071974081691688" === role.id ? "BACHELORS" : "MASTERS"
+				degree: degree_.name.toUpperCase() as Degrees
 			}
 		});
 

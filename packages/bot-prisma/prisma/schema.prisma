@@ -115,8 +115,11 @@ model Channel {
 }
 
 enum Degrees {
+  ASSOCIATES
   BACHELORS
   MASTERS
+  EXPERTS
+  PHD
 }
 
 enum Actions {

@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo run build",
+		"clean": "find . -type d \\( -name '.turbo' -o -name 'node_modules' -o -name 'build' -o -name 'generated' \\) -prune -exec rm -rf {} +",
 		"lint": "turbo run lint",
 		"dev": "turbo run dev",
 		"deploy": "turbo run deploy",

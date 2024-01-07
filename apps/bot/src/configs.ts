@@ -13,7 +13,26 @@ if (!GUILD_ID) {
 	throw new Error("GUILD_ID is not set");
 }
 
-export const DEGREE_MAP = new Map([
-	["BACHELORS", "923071974081691688"],
-	["MASTERS", "802287690502111232"]
-]);
+type D = {
+	id: string;
+	name: string;
+	previous: string | null;
+};
+
+export const DEGREES: Record<string, D> = {
+	associates: {
+		id: "1193303199394832516",
+		name: "Associates",
+		previous: null
+	},
+	bachelors: {
+		id: "1193303225990926460",
+		name: "Bachelors",
+		previous: "Associates"
+	},
+	masters: {
+		id: "1193321534996107365",
+		name: "Masters",
+		previous: "Bachelors"
+	}
+};
