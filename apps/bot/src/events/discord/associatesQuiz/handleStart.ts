@@ -96,7 +96,10 @@ export class HandleAssociateQuizStart {
 		if (guildMember.user.createdAt > requiredAccountAge) {
 			await interaction.editReply({
 				content:
-					"Your account must be at least a month old to take the quiz. Please try again later. This channel will be deleted in 60 seconds."
+					"Your account must be at least a month old to take the quiz. Please try again later."
+			});
+			await interaction.channel?.send({
+				content: "This channel will be deleted in 60 seconds."
 			});
 			setTimeout(() => {
 				interaction.channel?.delete().catch(() => {});
@@ -126,7 +129,7 @@ export class HandleAssociateQuizStart {
 			});
 			await interaction.channel?.send({
 				// eslint-disable-next-line no-irregular-whitespace
-				content: `This channel will be deleted in 60 seconds.||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||<@${interaction.user.id}>`
+				content: `This channel will be deleted in 60 seconds.`
 			});
 			setTimeout(() => {
 				interaction.channel?.delete().catch(() => {});
@@ -252,7 +255,9 @@ export class HandleAssociateQuizStart {
 				.setCustomId(`associateQuestion`)
 				.setPlaceholder(
 					question.type === "MULTIPLE_CHOICE"
-						? "Select all that apply"
+						? `Select ${
+								question.choices.filter(choice => choice.correct).length
+						  } correct answer(s)`
 						: "Select the correct answer"
 				)
 				.setMinValues(1)
@@ -275,7 +280,13 @@ export class HandleAssociateQuizStart {
 			const embed = new EmbedBuilder()
 				.setTitle(
 					`
-					${question.type === "MULTIPLE_CHOICE" ? "Multiple" : "Single"} Choice Question
+					${
+						question.type === "MULTIPLE_CHOICE"
+							? `
+						Choose ${question.choices.filter(choice => choice.correct).length} answer(s)
+					`
+							: "Choose 1 answer"
+					}
 					`
 				)
 				.setDescription(
@@ -323,8 +334,8 @@ export class HandleAssociateQuizStart {
 					content: `You have 5 minutes remaining to complete the quiz <@${interaction.user.id}>!`
 				})
 				.catch(() => {});
-		}, 3300000);
-		// 55 minutes
+		}, 300000);
+		// 5 minutes
 
 		setTimeout(async () => {
 			await interaction.channel
@@ -332,11 +343,11 @@ export class HandleAssociateQuizStart {
 					content: `You have 1 minute remaining to complete the quiz <@${interaction.user.id}>!`
 				})
 				.catch(() => {});
-		}, 3540000);
-		// 59 minutes
+		}, 540000);
+		// 9 minutes
 
 		setTimeout(async () => {
 			await interaction.channel?.delete().catch(() => {});
-		}, 3600000);
+		}, 600000);
 	}
 }

@@ -1,5 +1,5 @@
 import { Prisma, prisma } from "bot-prisma";
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction, EmbedBuilder, GuildMember } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
 import { upsertUser } from "../../../common/util.js";
 import { DEGREES } from "../../../configs.js";
@@ -84,6 +84,7 @@ export class HandleAssociateQuizStart {
 		}
 
 		let score = 0;
+		const incorrectAnswers = [];
 
 		for (const question of questions) {
 			const correctAnswers = question.choices
@@ -102,6 +103,8 @@ export class HandleAssociateQuizStart {
 			if (question.type === "SINGLE_CHOICE") {
 				if (correctAnswers.includes(userAnswerForQuestion as number)) {
 					score++;
+				} else if (userAnswerForQuestion) {
+					incorrectAnswers.push(question.id);
 				}
 			} else if (question.type === "MULTIPLE_CHOICE") {
 				if (Array.isArray(userAnswerForQuestion)) {
@@ -111,6 +114,10 @@ export class HandleAssociateQuizStart {
 					).length;
 					const incorrectUserAnswers =
 						userAnswerForQuestion.length - correctUserAnswers;
+
+					if (incorrectUserAnswers > 0) {
+						incorrectAnswers.push(question.id);
+					}
 
 					// Adjust the score
 					score += correctUserAnswers - incorrectUserAnswers;
@@ -137,10 +144,15 @@ export class HandleAssociateQuizStart {
 				console.error(err);
 			});
 
+			const passEmbed = new EmbedBuilder()
+				.setTitle("Building Bulletin Associates Degree Quiz")
+				.setDescription(
+					`You have passed the quiz. You scored a **${score}** points out of **${response.maxScore}** possible points.`
+				)
+				.setColor("Green");
+
 			await interaction.followUp({
-				content:
-					"Congratulations! You passed the quiz! The Associate Degree has been awarded to you!",
-				ephemeral: true
+				embeds: [passEmbed]
 			});
 			const associateRole = await interaction.guild?.roles.fetch(
 				String(config.associatesRoleId)
@@ -162,20 +174,33 @@ export class HandleAssociateQuizStart {
 				});
 			});
 			await interaction.channel?.send({
-				// eslint-disable-next-line no-irregular-whitespace
-				content: `This channel will be deleted in 60 seconds.||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||<@${interaction.user.id}>`
+				content: "This channel will be deleted in 60 seconds."
 			});
 			setTimeout(() => {
 				interaction.channel?.delete().catch(() => {});
 			}, 60000);
 		} else {
+			const failedEmbed = new EmbedBuilder()
+				.setTitle("Building Bulletin Associates Degree Quiz")
+				.setDescription(
+					`You have failed the quiz. You scored a **${score}** points out of **${response.maxScore}** possible points.`
+				)
+				.addFields({
+					name: "### Missed Questions",
+					value: incorrectAnswers
+						.map(id => {
+							const question = questions.find(q => q.id === id);
+							if (!question) return "";
+							return `- **${question.question}**`;
+						})
+						.join("\n")
+				})
+				.setColor("Red");
 			await interaction.followUp({
-				content: `Unfortunately you did not pass the quiz. You scored a ${score} out of ${response.maxScore}. You can retry in ${config.retryDelayDays} days.`,
-				ephemeral: true
+				embeds: [failedEmbed]
 			});
 			await interaction.channel?.send({
-				// eslint-disable-next-line no-irregular-whitespace
-				content: `This channel will be deleted in 60 seconds.||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||<@${interaction.user.id}>`
+				content: "This channel will be deleted in 60 seconds."
 			});
 			setTimeout(() => {
 				interaction.channel?.delete().catch(() => {});
