@@ -20,7 +20,9 @@ const rulesMessageText = `1. Leave your ego at the door.
 
 9. If posting someone else's build, credit when applicable.
 
-10. Follow Discord's [terms of service](https://discord.com/terms).
+10. Only speak English. This is an English server, ran by English speakers.
+
+11. Follow Discord's [terms of service](https://discord.com/terms).
 
 > If you have any questions or would like to appeal a ban or restriction, please use <#1137557514221789224>`;
 
