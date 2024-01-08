@@ -147,7 +147,7 @@ export class HandleAssociateQuizStart {
 			const passEmbed = new EmbedBuilder()
 				.setTitle("Building Bulletin Associates Degree Quiz")
 				.setDescription(
-					`You have passed the quiz. You scored a **${score}** points out of **${response.maxScore}** possible points.`
+					`You have passed the quiz. You scored **${score}** point(s) out of **${response.maxScore}** possible point(s).`
 				)
 				.setColor("Green");
 
