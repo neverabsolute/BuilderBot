@@ -60,7 +60,8 @@ export class HandleAssociateQuizStart {
 		const associatesResponses = await prisma.associatesResponses.findMany({
 			where: {
 				userId: discordUser.id,
-				finished: true
+				finished: true,
+				cdSkipped: false
 			}
 		});
 

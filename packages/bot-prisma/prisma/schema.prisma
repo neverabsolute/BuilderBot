@@ -19,6 +19,7 @@ model User {
   messages        Message[]
   roles           Roles[]
   responses       AssociatesResponses[]
+  cooldownsReset  AssociatesResponses[] @relation("CooldownsReset")
   ticketBans      TicketBan[]
   degreesGiven    DegreeChanges[]       @relation("DegreesGiven")
   degreesReceived DegreeChanges[]       @relation("DegreesReceived")
@@ -86,16 +87,19 @@ model AssociatesQuestionChoices {
 }
 
 model AssociatesResponses {
-  id         Int      @id @unique @default(autoincrement())
-  score      Int
-  maxScore   Int      @default(0)
-  answerDict Json     @default("{}")
-  userId     BigInt
-  channelId  BigInt
-  finished   Boolean
-  user       User     @relation(fields: [userId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            Int      @id @unique @default(autoincrement())
+  score         Int
+  maxScore      Int      @default(0)
+  answerDict    Json     @default("{}")
+  userId        BigInt
+  channelId     BigInt
+  finished      Boolean
+  cdSkipped     Boolean  @default(false)
+  cdSkippedBy   User?    @relation(fields: [cdSkippedById], references: [id], name: "CooldownsReset")
+  cdSkippedById BigInt?
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Roles {

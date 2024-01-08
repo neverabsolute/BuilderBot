@@ -35,6 +35,9 @@ export class AssociatesAttempts {
 					id: user.id
 				}
 			},
+			include: {
+				cdSkippedBy: true
+			},
 			orderBy: {
 				createdAt: "desc"
 			},
@@ -56,7 +59,7 @@ export class AssociatesAttempts {
 		for (const attempt of attempts) {
 			const embed = new EmbedBuilder()
 				.setTitle(`Attempt #${attempt.id}`)
-				.setColor("Red");
+				.setColor(`${attempt.score === attempt.maxScore ? "Green" : "Red"}`);
 			embed.addFields(
 				{
 					name: "User",
@@ -75,6 +78,12 @@ export class AssociatesAttempts {
 					value: `${attempt.score}/${attempt.maxScore}`
 				}
 			);
+			if (attempt.cdSkipped) {
+				embed.addFields({
+					name: "Cooldown skipped by",
+					value: `<@${attempt.cdSkippedBy?.id}>`
+				});
+			}
 			embeds.push(embed.toJSON());
 		}
 
