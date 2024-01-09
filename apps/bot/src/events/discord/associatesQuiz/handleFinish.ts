@@ -185,17 +185,19 @@ export class HandleAssociateQuizStart {
 				.setDescription(
 					`You have failed the quiz. You scored a **${score}** points out of **${response.maxScore}** possible points.`
 				)
-				.addFields({
-					name: "### Missed Questions",
+				.setColor("Red");
+			if (incorrectAnswers.length > 0) {
+				failedEmbed.addFields({
+					name: "## Missed Questions",
 					value: incorrectAnswers
 						.map(id => {
 							const question = questions.find(q => q.id === id);
 							if (!question) return "";
 							return `- **${question.question}**`;
 						})
-						.join("\n")
-				})
-				.setColor("Red");
+						.join("\n") || "Something went wrong. Please contact a Professor for assistance."
+				});
+			}
 			await interaction.followUp({
 				embeds: [failedEmbed]
 			});
