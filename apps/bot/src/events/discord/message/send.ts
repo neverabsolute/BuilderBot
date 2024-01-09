@@ -27,7 +27,7 @@ export class HandleMessageCreate {
 			return;
 		}
 
-		if (!message.attachments.size  && !message.embeds.length) {
+		if (!message.attachments.size && !message.embeds.length) {
 			await message.delete().catch(() => {});
 		}
 	}
