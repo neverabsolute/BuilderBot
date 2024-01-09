@@ -9,7 +9,13 @@ import { BOT_TOKEN, GUILD_ID, SENTRY_DSN } from "./configs.js";
 import { initializeLoops } from "./loops/main.js";
 
 Sentry.init({
-	dsn: SENTRY_DSN
+	dsn: SENTRY_DSN,
+	integrations: [
+		new Sentry.Integrations.Console({}),
+		new Sentry.Integrations.Http({ tracing: true }),
+		new Sentry.Integrations.OnUncaughtException({}),
+		new Sentry.Integrations.OnUnhandledRejection({})
+	]
 });
 
 export const bot = new Client({
