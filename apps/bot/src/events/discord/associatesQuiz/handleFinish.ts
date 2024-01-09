@@ -188,7 +188,7 @@ export class HandleAssociateQuizStart {
 				.setColor("Red");
 			if (incorrectAnswers.length > 0) {
 				failedEmbed.addFields({
-					name: "## Missed Questions",
+					name: "**Missed Questions**",
 					value: incorrectAnswers
 						.map(id => {
 							const question = questions.find(q => q.id === id);

@@ -44,6 +44,11 @@ export const DEGREES: Record<string, D> = {
 
 export const BACH_CATEGORY_ID = "872616925409214495";
 
+export const BACH_QUESTIONS = process.env.BACH_QUESTIONS!;
+if (!BACH_QUESTIONS) {
+	throw new Error("BACH_QUESTIONS is not set");
+}
+
 export const SENTRY_DSN = process.env.SENTRY_DSN!;
 if (!SENTRY_DSN) {
 	throw new Error("SENTRY_DSN is not set");
