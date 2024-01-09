@@ -53,3 +53,5 @@ export const SENTRY_DSN = process.env.SENTRY_DSN!;
 if (!SENTRY_DSN) {
 	throw new Error("SENTRY_DSN is not set");
 }
+
+export const FOOTPRINTS_CHANNEL = "656343259295252481";
