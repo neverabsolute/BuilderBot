@@ -1,11 +1,16 @@
 import { dirname as dir, importx } from "@discordx/importer";
+import * as Sentry from "@sentry/node";
 import { prisma } from "bot-prisma";
 import { GuildMember, IntentsBitField } from "discord.js";
 import { Client } from "discordx";
 import "reflect-metadata";
 import { saveMessage, upsertUser } from "./common/util.js";
-import { BOT_TOKEN, GUILD_ID } from "./configs.js";
+import { BOT_TOKEN, GUILD_ID, SENTRY_DSN } from "./configs.js";
 import { initializeLoops } from "./loops/main.js";
+
+Sentry.init({
+	dsn: SENTRY_DSN
+});
 
 export const bot = new Client({
 	// Discord intents

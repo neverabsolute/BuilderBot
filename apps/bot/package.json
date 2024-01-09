@@ -17,6 +17,8 @@
 		"@discordx/importer": "^1.2.3",
 		"@discordx/pagination": "^3.4.1",
 		"@discordx/utilities": "^5.2.1",
+		"@sentry/node": "^7.92.0",
+		"@sentry/profiling-node": "^1.3.3",
 		"bot-prisma": "workspace:*",
 		"discord.js": "^14.13.0",
 		"discordx": "^11.7.6",
