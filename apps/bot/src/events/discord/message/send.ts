@@ -4,9 +4,9 @@ import { Discord, On } from "discordx";
 import { FOOTPRINTS_CHANNEL } from "../../../configs.js";
 
 @Discord()
-export class HandleMessageUpdate {
+export class HandleMessageCreate {
 	@On()
-	async messageUpdate([message]: ArgsOf<"messageCreate">) {
+	async messageCreate([message]: ArgsOf<"messageCreate">) {
 		if (message.channelId !== FOOTPRINTS_CHANNEL) {
 			return;
 		}
@@ -27,7 +27,7 @@ export class HandleMessageUpdate {
 			return;
 		}
 
-		if (!message.attachments.size && !message.embeds.length) {
+		if (!message.attachments.size  && !message.embeds.length) {
 			await message.delete().catch(() => {});
 		}
 	}
