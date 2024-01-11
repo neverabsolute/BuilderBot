@@ -18,7 +18,7 @@ export class HandleChannelCreate {
 		if (channel.parentId === BACH_CATEGORY_ID) {
 			const bachEmbed = new EmbedBuilder()
 				.setTitle("Building Bulletin Bachelors Degree Quiz")
-				.setDescription(BACH_QUESTIONS)
+				.setDescription(BACH_QUESTIONS.replace(/\\n/g, "\n"))
 				.setColor("Green");
 
 			const bachAttachment = new AttachmentBuilder(
@@ -29,11 +29,11 @@ export class HandleChannelCreate {
 
 			await channel.send({
 				embeds: [bachEmbed]
-			});
+			}).catch(() => {});
 
 			await channel.send({
 				files: [bachAttachment]
-			});
+			}).catch(() => {});
 		}
 
 		const associatesCategoryId = await prisma.associatesConfiguration
