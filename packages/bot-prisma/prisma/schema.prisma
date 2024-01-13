@@ -119,6 +119,7 @@ model Channel {
 }
 
 enum Degrees {
+  ENTHUSIAST
   ASSOCIATES
   BACHELORS
   MASTERS

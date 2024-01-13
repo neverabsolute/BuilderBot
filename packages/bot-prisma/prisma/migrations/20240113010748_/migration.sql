@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "Degrees" ADD VALUE 'ENTHUSIAST';
