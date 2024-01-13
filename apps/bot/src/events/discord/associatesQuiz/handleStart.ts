@@ -123,8 +123,6 @@ export class HandleAssociateQuizStart {
 				mostRecentAttempt.createdAt.getTime() + numDaysAgo * 1000 * 60 * 60 * 24
 			);
 
-			console.log(mostRecentAttempt, timeTillRetry);
-
 			await interaction.editReply({
 				content: `You have already taken the quiz within the last ${numDaysAgo} days. You can take it again after <t:${Math.floor(
 					timeTillRetry.getTime() / 1000
