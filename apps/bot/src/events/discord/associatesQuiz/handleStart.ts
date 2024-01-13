@@ -116,20 +116,21 @@ export class HandleAssociateQuizStart {
 			})
 		) {
 			const timeTillRetry = new Date();
-			// set the timeTillRetry to the date of which the last quiz taken + numDaysAgo days
-			timeTillRetry.setDate(
-				associatesResponses
-					.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0]
-					.createdAt.getDate() + numDaysAgo
+			const mostRecentAttempt = associatesResponses.sort(
+				(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+			)[0];
+			timeTillRetry.setTime(
+				mostRecentAttempt.createdAt.getTime() + numDaysAgo * 1000 * 60 * 60 * 24
 			);
 
+			console.log(mostRecentAttempt, timeTillRetry);
+
 			await interaction.editReply({
-				content: `You have already taken the quiz within the last ${numDaysAgo} days. You can take it again <t:${Math.floor(
+				content: `You have already taken the quiz within the last ${numDaysAgo} days. You can take it again after <t:${Math.floor(
 					timeTillRetry.getTime() / 1000
-				)}:R>`
+				)}:f>`
 			});
 			await interaction.channel?.send({
-				// eslint-disable-next-line no-irregular-whitespace
 				content: `This channel will be deleted in 60 seconds.`
 			});
 			setTimeout(() => {
@@ -258,7 +259,7 @@ export class HandleAssociateQuizStart {
 					question.type === "MULTIPLE_CHOICE"
 						? `Select ${
 								question.choices.filter(choice => choice.correct).length
-						  } correct answer(s)`
+						  } correct answers`
 						: "Select the correct answer"
 				)
 				.setMinValues(1)
@@ -284,7 +285,7 @@ export class HandleAssociateQuizStart {
 					${
 						question.type === "MULTIPLE_CHOICE"
 							? `
-						Choose ${question.choices.filter(choice => choice.correct).length} answer(s)
+						Choose ${question.choices.filter(choice => choice.correct).length} answers
 					`
 							: "Choose 1 answer"
 					}

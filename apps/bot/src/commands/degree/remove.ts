@@ -8,6 +8,7 @@ import {
 import { Discord, Slash, SlashOption, SlashGroup } from "discordx";
 import { Degrees, prisma } from "bot-prisma";
 import { filterForDegrees, getDegreeById, getDegreeByName } from "./common.js";
+import { upsertUser } from "../../common/util.js";
 
 @Discord()
 @SlashGroup({ name: "degree", description: "Degree commands" })
@@ -39,6 +40,8 @@ export class RemoveDegree {
 		interaction: CommandInteraction
 	) {
 		await interaction.deferReply({ ephemeral: true });
+
+		await upsertUser(user);
 
 		if (!interaction.guild) {
 			const embed = new EmbedBuilder()
