@@ -7,9 +7,9 @@ import { FOOTPRINTS_CHANNEL } from "../../../configs.js";
 export class HandleMessageCreate {
 	@On()
 	async messageCreate([message]: ArgsOf<"messageCreate">) {
-		if (message.channelId == FOOTPRINTS_CHANNEL) {
-			if (message.author.bot) return;
+		if (message.author.bot) return;
 
+		if (message.channelId == FOOTPRINTS_CHANNEL) {
 			const discordian = message.member;
 
 			if (!discordian || !(discordian instanceof GuildMember)) {
@@ -56,10 +56,10 @@ export class HandleMessageCreate {
 				return;
 			}
 
+			await message.delete().catch(() => {});
+
 			await discordian
-				.ban({
-					reason: "Sending masked markdown links"
-				})
+				.timeout(5 * 60 * 1000, "Attempting to mask a link as another link")
 				.catch(() => {});
 
 			break;
