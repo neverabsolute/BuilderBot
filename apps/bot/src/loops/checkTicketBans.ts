@@ -31,7 +31,7 @@ async function runTicketBanLoop(client: Client) {
 
 		for (const ticketBan of ticketBans) {
 			const guild = await client.guilds.fetch(GUILD_ID);
-			const member = await guild.members.fetch(String(ticketBan.userId));
+			const member = await guild.members.fetch(String(ticketBan.userId)).catch(() => null);
 
 			if (!member) {
 				continue;
