@@ -42,6 +42,10 @@ export class HandleMessageCreate {
 				return;
 			}
 
+			if (url.hostname === "cdn.discordapp.com") {
+				return;
+			}
+
 			const discordian = message.member;
 
 			if (!discordian || !(discordian instanceof GuildMember)) {
