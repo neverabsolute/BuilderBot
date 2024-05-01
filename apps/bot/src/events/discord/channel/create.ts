@@ -13,9 +13,25 @@ import { BACH_CATEGORY_ID, BACH_QUESTIONS } from "../../../configs.js";
 export class HandleChannelCreate {
 	@On()
 	async channelCreate([channel]: ArgsOf<"channelCreate">) {
-		if (!channel.guild || !channel.isTextBased() || !channel.parentId) return;
+		if (!channel.guild || !channel.isTextBased()) return;
 
-		if (channel.parentId === BACH_CATEGORY_ID) {
+		await prisma.channel.upsert({
+			where: {
+				id: BigInt(channel.id)
+			},
+			update: {
+				name: channel.name
+			},
+			create: {
+				id: BigInt(channel.id),
+				name: channel.name,
+				guildId: BigInt(channel.guild.id)
+			}
+		});
+
+		console.log(`Created channel ${channel.id}`);
+
+		if (channel.parentId && channel.parentId === BACH_CATEGORY_ID) {
 			const bachEmbed = new EmbedBuilder()
 				.setTitle("Building Bulletin Bachelors Degree Quiz")
 				.setDescription(BACH_QUESTIONS.replace(/\\n/g, "\n"))
@@ -27,19 +43,24 @@ export class HandleChannelCreate {
 
 			await new Promise(resolve => setTimeout(resolve, 5000));
 
-			await channel.send({
-				embeds: [bachEmbed]
-			}).catch(() => {});
+			await channel
+				.send({
+					embeds: [bachEmbed]
+				})
+				.catch(() => {});
 
-			await channel.send({
-				files: [bachAttachment]
-			}).catch(() => {});
+			await channel
+				.send({
+					files: [bachAttachment]
+				})
+				.catch(() => {});
 		}
 
 		const associatesCategoryId = await prisma.associatesConfiguration
 			.findFirst({})
 			.then(config => config?.categoryId);
 		if (!associatesCategoryId) return;
+		if (!channel.parentId) return;
 		if (BigInt(channel.parentId) !== associatesCategoryId) return;
 
 		const retryDelayDays = await prisma.associatesConfiguration

@@ -23,6 +23,7 @@ model User {
   ticketBans      TicketBan[]
   degreesGiven    DegreeChanges[]       @relation("DegreesGiven")
   degreesReceived DegreeChanges[]       @relation("DegreesReceived")
+  voiceCalls      VoiceCalls[]
 }
 
 model TicketBan {
@@ -110,12 +111,13 @@ model Roles {
 }
 
 model Channel {
-  id        BigInt    @id @unique
-  name      String?
-  guildId   BigInt
-  messages  Message[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         BigInt       @id @unique
+  name       String?
+  guildId    BigInt
+  messages   Message[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  voiceCalls VoiceCalls[]
 }
 
 enum Degrees {
@@ -140,6 +142,17 @@ model DegreeChanges {
   fromId    BigInt
   to        User     @relation(fields: [toId], references: [id], name: "DegreesReceived")
   toId      BigInt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VoiceCalls {
+  id        Int      @id @unique @default(autoincrement())
+  channel   Channel? @relation(fields: [channelId], references: [id], onDelete: SetNull)
+  channelId BigInt?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    BigInt
+  duration  Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

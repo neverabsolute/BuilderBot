@@ -18,6 +18,16 @@ Sentry.init({
 	]
 });
 
+process.on("uncaughtException", error => {
+	console.error("Unhandled Exception", error);
+	Sentry.captureException(error);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+	console.error("Unhandled Rejection at:", promise, "reason:", reason);
+	Sentry.captureException(reason);
+});
+
 export const bot = new Client({
 	// Discord intents
 	intents: [
@@ -78,26 +88,24 @@ bot.once("ready", async () => {
 		);
 
 		const channels = await guild.channels.fetch();
-		const unknownChannels = await prisma.channel.findMany({
-			where: {
-				name: "deleted-channel",
-				guildId: -1
-			}
-		});
-
-		for (const channel of unknownChannels) {
-			if (channels.has(String(channel.id))) {
-				await prisma.channel.update({
-					where: {
-						id: channel.id
-					},
-					data: {
-						name: channels.get(String(channel.id))!.name,
-						guildId: BigInt(GUILD_ID)
-					}
-				});
-			}
+		for (const channel of channels.values()) {
+			if (!channel || !channel.isTextBased()) continue;
+			await prisma.channel.upsert({
+				where: {
+					id: BigInt(channel.id)
+				},
+				update: {
+					name: channel.name
+				},
+				create: {
+					id: BigInt(channel.id),
+					name: channel.name,
+					guildId: BigInt(guild.id)
+				}
+			});
 		}
+
+		console.log(`Upserted ${channels.size} channels.`);
 	}
 
 	console.log("Bot started");

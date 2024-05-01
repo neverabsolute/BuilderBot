@@ -21,5 +21,13 @@ export class HandleChannelDelete {
 				}
 			});
 		}
+
+		await prisma.channel.delete({
+			where: {
+				id: BigInt(channel.id)
+			}
+		});
+
+		console.log(`Deleted channel ${channel.id}`);
 	}
 }
