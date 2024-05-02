@@ -45,8 +45,8 @@ model Message {
   createdAt DateTime @default(now())
   content   String
   userId    BigInt
-  channel   Channel  @relation(fields: [channelId], references: [id])
-  channelId BigInt
+  channel   Channel? @relation(fields: [channelId], references: [id])
+  channelId BigInt?
   guildId   BigInt
 }
 
