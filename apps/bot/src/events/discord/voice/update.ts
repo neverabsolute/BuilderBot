@@ -9,6 +9,33 @@ export class HandleVoiceStateUpdate {
 	async voiceStateUpdate([oldState, newState]: ArgsOf<"voiceStateUpdate">) {
 		if (oldState.channelId === newState.channelId) return;
 		if (!newState.member || !(newState.member instanceof GuildMember)) return;
+		if (!newState.channelId && !oldState.channelId) return;
+
+		await prisma.user.upsert({
+			where: {
+				id: BigInt(newState.member.id)
+			},
+			update: {},
+			create: {
+				id: BigInt(newState.member.id),
+				username: newState.member.user.username,
+				nickname: newState.member.nickname
+			}
+		});
+
+		await prisma.channel.upsert({
+			where: {
+				// @ts-expect-error one of these will always be defined
+				id: BigInt(BigInt(newState.channelId ?? oldState.channelId))
+			},
+			update: {},
+			create: {
+				// @ts-expect-error one of these will always be defined
+				id: BigInt(newState.channelId ?? oldState.channelId),
+				name: newState.channel?.name,
+				guildId: BigInt(newState.guild.id)
+			}
+		});
 
 		if (newState.channelId && !oldState.channelId) {
 			// User joined a voice channel
