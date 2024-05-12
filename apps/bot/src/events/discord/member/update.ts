@@ -1,7 +1,7 @@
 import { prisma } from "bot-prisma";
 import type { ArgsOf } from "discordx";
 import { Discord, On } from "discordx";
-import { upsertUser } from "../../../common/util.js";
+import { upsertRoles, upsertUser } from "../../../common/util.js";
 
 @Discord()
 export class HandleMemberUpdate {
@@ -9,9 +9,7 @@ export class HandleMemberUpdate {
 	async guildMemberUpdate([, member]: ArgsOf<"guildMemberUpdate">) {
 		if (!member.guild.available || member?.user?.bot) return;
 		const user = await upsertUser(member);
-		const userRoles = member.roles.cache.map(role => ({
-			id: BigInt(role.id)
-		}));
+		const roles = await upsertRoles(member);
 
 		await prisma.user.update({
 			where: {
@@ -19,7 +17,7 @@ export class HandleMemberUpdate {
 			},
 			data: {
 				roles: {
-					set: userRoles
+					set: roles
 				}
 			}
 		});

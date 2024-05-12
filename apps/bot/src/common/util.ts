@@ -60,3 +60,40 @@ export async function saveMessage(message: Message) {
 		}
 	});
 }
+
+export async function upsertRoles(member: GuildMember) {
+	const userRoles = member.roles.cache.map(role => ({
+		id: BigInt(role.id)
+	}));
+	for (const role of userRoles) {
+		await prisma.roles
+			.upsert({
+				where: {
+					id: role.id
+				},
+				update: {
+					name:
+						member.guild.roles.cache.get(role.id.toString())?.name || "Unknown"
+				},
+				create: {
+					id: role.id,
+					name:
+						member.guild.roles.cache.get(role.id.toString())?.name || "Unknown"
+				}
+			})
+			.catch(() => {});
+	}
+
+	await prisma.user.update({
+		where: {
+			id: BigInt(member.user.id)
+		},
+		data: {
+			roles: {
+				set: userRoles
+			}
+		}
+	});
+
+	return userRoles;
+}
