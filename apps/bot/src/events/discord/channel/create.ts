@@ -5,7 +5,6 @@ import {
 	ButtonStyle,
 	ComponentType,
 	EmbedBuilder,
-	AttachmentBuilder
 } from "discord.js";
 import { BACH_CATEGORY_ID, BACH_QUESTIONS } from "../../../configs.js";
 
@@ -37,10 +36,6 @@ export class HandleChannelCreate {
 				.setDescription(BACH_QUESTIONS.replace(/\\n/g, "\n"))
 				.setColor("Green");
 
-			const bachAttachment = new AttachmentBuilder(
-				"https://www.youtube.com/watch?v=FCxE6RWE7nw"
-			);
-
 			await new Promise(resolve => setTimeout(resolve, 5000));
 
 			await channel
@@ -51,7 +46,7 @@ export class HandleChannelCreate {
 
 			await channel
 				.send({
-					files: [bachAttachment]
+					content: "https://www.youtube.com/watch?v=FCxE6RWE7nw"
 				})
 				.catch(() => {});
 		}
