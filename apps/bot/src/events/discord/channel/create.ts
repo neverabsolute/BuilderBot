@@ -38,7 +38,7 @@ export class HandleChannelCreate {
 				.setColor("Green");
 
 			const bachAttachment = new AttachmentBuilder(
-				"https://i.imgur.com/LETehZQ.jpeg"
+				"https://www.youtube.com/watch?v=FCxE6RWE7nw"
 			);
 
 			await new Promise(resolve => setTimeout(resolve, 5000));

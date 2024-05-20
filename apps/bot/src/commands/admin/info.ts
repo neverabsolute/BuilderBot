@@ -20,7 +20,7 @@ const roleMessageText = `\`👔\` **Staff Roles**
 
 \`⚪\` **Other Roles**
 - <@&1108091898930941962> - Retired community members that contributed highly to Building Bulletin
-- <@&636796048580542494> - The best builders that consistently make bases to perfection. Given at discretion by <@&722201585534500925>, but can also be awarded in PhD tickets
+- <@&636796048580542494> - The best builders that consistently make bases to perfection. Given at discretion by <@&722201585534500925>
 - <@&1116831297017479249> - Deans that have retired from management
 - <@&802602838353117234> - YouTubers/Streamers
 - <@&802287690502111232> - Users that earned their Masters Degree before 2024
@@ -34,6 +34,7 @@ const roleMessageText = `\`👔\` **Staff Roles**
 const boostMessageText = `\`🚀\` **Boost Perks**
 - Hoisted role in the user list
 - Booster role icon
+- Can change nickname
 - Access to exclusive #builderboys channel`;
 
 @Discord()
