@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import { Discord, Slash, SlashOption, SlashGroup } from "discordx";
 import { prisma } from "bot-prisma";
-import { upsertUser } from "../../common/util.js";
+import { upsertMember } from "../../common/util.js";
 
 @Discord()
 @SlashGroup({ name: "ticketban", description: "Ticket ban commands" })
@@ -28,7 +28,7 @@ export class Info {
 	) {
 		await interaction.deferReply();
 
-		const user = await upsertUser(member);
+		const user = await upsertMember(member);
 		const ticketBans = await prisma.ticketBan.findMany({
 			where: {
 				userId: user.id

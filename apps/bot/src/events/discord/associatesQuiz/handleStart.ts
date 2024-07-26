@@ -10,7 +10,7 @@ import {
 	StringSelectMenuOptionBuilder
 } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
-import { upsertUser } from "../../../common/util.js";
+import { upsertMember } from "../../../common/util.js";
 
 const alphabet = new Map([
 	[0, "A"],
@@ -53,7 +53,7 @@ export class HandleAssociateQuizStart {
 			return;
 		}
 
-		const discordUser = await upsertUser(member);
+		const discordUser = await upsertMember(member);
 		const config = await prisma.associatesConfiguration.findFirst({});
 		const numDaysAgo = config?.retryDelayDays || 7;
 		const numQuestions = config?.numQuestions || 5;

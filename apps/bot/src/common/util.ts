@@ -1,7 +1,13 @@
 import { prisma } from "bot-prisma";
-import { GuildMember, Message } from "discord.js";
+import {
+	GuildMember,
+	Message,
+	PartialMessage,
+	PartialUser,
+	User
+} from "discord.js";
 
-export async function upsertUser(member: GuildMember) {
+export async function upsertMember(member: GuildMember) {
 	return await prisma.user.upsert({
 		where: {
 			id: BigInt(member.user.id)
@@ -22,7 +28,24 @@ export async function upsertUser(member: GuildMember) {
 	});
 }
 
-export async function saveMessage(message: Message) {
+export async function upsertUser(user: User | PartialUser) {
+	return await prisma.user.upsert({
+		where: {
+			id: BigInt(user.id)
+		},
+		update: {
+			username: user.username,
+			discriminator: Number(user.discriminator)
+		},
+		create: {
+			id: BigInt(user.id),
+			username: user.username,
+			discriminator: Number(user.discriminator)
+		}
+	});
+}
+
+export async function saveMessage(message: Message | PartialMessage) {
 	const channel = message.channel;
 	if (!channel || !channel.isTextBased() || channel.isDMBased()) return;
 	await prisma.channel.upsert({
@@ -41,10 +64,13 @@ export async function saveMessage(message: Message) {
 			guildId: BigInt(channel.guild.id)
 		}
 	});
-	await prisma.message.create({
-		data: {
+	await prisma.message.upsert({
+		where: {
+			id: BigInt(message.id)
+		},
+		create: {
 			id: BigInt(message.id),
-			content: message.content,
+			content: message.content ?? "",
 			createdAt: message.createdAt,
 			channel: {
 				connect: {
@@ -54,10 +80,11 @@ export async function saveMessage(message: Message) {
 			guildId: BigInt(message.guildId ?? "0"),
 			author: {
 				connect: {
-					id: BigInt(message.author.id)
+					id: BigInt(message.author?.id ?? "0")
 				}
 			}
-		}
+		},
+		update: {}
 	});
 }
 

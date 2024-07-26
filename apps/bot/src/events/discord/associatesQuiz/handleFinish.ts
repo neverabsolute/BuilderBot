@@ -1,7 +1,7 @@
 import { Prisma, prisma } from "bot-prisma";
 import { CommandInteraction, EmbedBuilder, GuildMember } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
-import { upsertUser } from "../../../common/util.js";
+import { upsertMember } from "../../../common/util.js";
 import { DEGREES } from "../../../configs.js";
 
 const lastButtonClickTimestamps = new Map<string, number>();
@@ -33,7 +33,7 @@ export class HandleAssociateQuizStart {
 			return;
 		}
 
-		const discordUser = await upsertUser(member);
+		const discordUser = await upsertMember(member);
 		const response = await prisma.associatesResponses.findFirst({
 			where: {
 				userId: discordUser.id,

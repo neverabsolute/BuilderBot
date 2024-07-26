@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import { Discord, Slash, SlashOption, SlashGroup } from "discordx";
 import { prisma } from "bot-prisma";
-import { upsertUser } from "../../common/util.js";
+import { upsertMember } from "../../common/util.js";
 
 @Discord()
 @SlashGroup({ name: "attempts", description: "Quiz attempt commands" })
@@ -28,7 +28,7 @@ export class AssociatesAttempts {
 	) {
 		await interaction.deferReply();
 
-		const user = await upsertUser(member);
+		const user = await upsertMember(member);
 		const attempts = await prisma.associatesResponses.findMany({
 			where: {
 				user: {

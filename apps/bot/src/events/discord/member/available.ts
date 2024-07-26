@@ -1,7 +1,7 @@
 import { prisma } from "bot-prisma";
 import type { ArgsOf } from "discordx";
 import { Discord, On } from "discordx";
-import { upsertRoles, upsertUser } from "../../../common/util.js";
+import { upsertRoles, upsertMember } from "../../../common/util.js";
 import { GuildMember } from "discord.js";
 
 @Discord()
@@ -14,7 +14,7 @@ export class HandleMemberAvailable {
 			member?.user?.bot
 		)
 			return;
-		const user = await upsertUser(member);
+		const user = await upsertMember(member);
 		const roles = await upsertRoles(member);
 
 		await prisma.user.update({

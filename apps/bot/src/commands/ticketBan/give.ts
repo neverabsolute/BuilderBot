@@ -5,7 +5,7 @@ import {
 	GuildMember
 } from "discord.js";
 import { Discord, Slash, SlashGroup, SlashOption } from "discordx";
-import { upsertUser } from "../../common/util.js";
+import { upsertMember } from "../../common/util.js";
 import { TICKETBAN_ROLE_ID } from "../../configs.js";
 
 @Discord()
@@ -53,7 +53,7 @@ export class Give {
 			return;
 		}
 
-		const user = await upsertUser(member);
+		const user = await upsertMember(member);
 		const ticketBanRole = interaction.guild.roles.cache.get(TICKETBAN_ROLE_ID);
 		const banExpiresAt = new Date();
 

@@ -1,6 +1,6 @@
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { Discord, Slash, SlashGroup } from "discordx";
-import { upsertUser } from "../../common/util.js";
+import { upsertMember } from "../../common/util.js";
 import { prisma } from "bot-prisma";
 
 @Discord()
@@ -66,7 +66,7 @@ Updating user to role mappings: ❔`
 		});
 
 		for (const member of (await interaction.guild!.members.fetch()).values()) {
-			const user = await upsertUser(member);
+			const user = await upsertMember(member);
 			const userRoles = member.roles.cache.map(role => ({
 				id: BigInt(role.id)
 			}));

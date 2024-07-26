@@ -9,7 +9,7 @@
 		"dev": "turbo run dev",
 		"deploy": "turbo run deploy",
 		"migrate:deploy": "turbo run migrate:deploy",
-		"migrate:dev": "bash migrate.sh",
+		"migrate:dev": "cd packages/bot-prisma && pnpx prisma migrate dev --schema=prisma/schema.prisma && cd ../../",
 		"db:push": "turbo run db:push",
 		"format": "prettier --write **/*.{json,md,ts,*js,css,svelte,html}"
 	},

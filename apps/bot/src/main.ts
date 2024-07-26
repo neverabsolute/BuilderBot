@@ -4,7 +4,7 @@ import { prisma } from "bot-prisma";
 import { GuildMember, IntentsBitField } from "discord.js";
 import { Client } from "discordx";
 import "reflect-metadata";
-import { saveMessage, upsertUser } from "./common/util.js";
+import { saveMessage, upsertMember } from "./common/util.js";
 import { BOT_TOKEN, GUILD_ID, SENTRY_DSN } from "./configs.js";
 import { initializeLoops } from "./loops/main.js";
 
@@ -113,7 +113,7 @@ bot.once("ready", async () => {
 
 bot.on("interactionCreate", async interaction => {
 	if (interaction.member instanceof GuildMember) {
-		await upsertUser(interaction.member);
+		await upsertMember(interaction.member);
 	}
 
 	bot.executeInteraction(interaction);
@@ -122,7 +122,7 @@ bot.on("interactionCreate", async interaction => {
 bot.on("messageCreate", async message => {
 	if (message.author.bot) return;
 	if (message.member) {
-		await upsertUser(message.member);
+		await upsertMember(message.member);
 		await saveMessage(message);
 	}
 	await bot.executeCommand(message);

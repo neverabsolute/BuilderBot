@@ -5,7 +5,7 @@ import {
 	GuildMember
 } from "discord.js";
 import { Discord, Slash, SlashGroup, SlashOption } from "discordx";
-import { upsertUser } from "../../common/util.js";
+import { upsertMember } from "../../common/util.js";
 import { TICKETBAN_ROLE_ID } from "../../configs.js";
 
 @Discord()
@@ -28,7 +28,7 @@ export class Remove {
 	) {
 		await interaction.deferReply({ ephemeral: true });
 
-		const user = await upsertUser(member);
+		const user = await upsertMember(member);
 		const ticketBans = await prisma.ticketBan.findMany({
 			where: {
 				userId: user.id,

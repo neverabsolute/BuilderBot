@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import { Discord, Slash, SlashOption, SlashGroup } from "discordx";
 import { prisma } from "bot-prisma";
-import { upsertUser } from "../../common/util.js";
+import { upsertMember } from "../../common/util.js";
 
 @Discord()
 @SlashGroup({ name: "attempts", description: "Quiz attempt commands" })
@@ -31,7 +31,7 @@ export class AssociatesCooldown {
 		const config = await prisma.associatesConfiguration.findFirst({});
 		const numDaysAgo = config?.retryDelayDays || 7;
 
-		const discordUser = await upsertUser(member);
+		const discordUser = await upsertMember(member);
 
 		const responses = await prisma.associatesResponses.findMany({
 			where: {
