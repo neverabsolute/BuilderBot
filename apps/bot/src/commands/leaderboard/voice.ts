@@ -84,6 +84,8 @@ export class VoiceLeaderboard {
 			});
 		});
 
-		await interaction.editReply({ embeds: [embed] });
+		const message = await interaction.editReply({ embeds: [embed] });
+
+		setTimeout(() => message.delete().catch(() => {}), 10000);
 	}
 }
