@@ -75,7 +75,7 @@ export class VoiceLeaderboard {
 			.setColor("Blue");
 
 		results.forEach((result, index) => {
-			const durationInMinutes = Math.floor(result._sum.duration ?? 0 / 60);
+			const durationInMinutes = Math.floor(result._sum.duration ?? 0 / 60 / 60);
 			embed.addFields({
 				name: `#${index + 1}`,
 				value: `<@${result.userId}>: ${durationInMinutes} ${
