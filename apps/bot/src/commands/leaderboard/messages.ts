@@ -58,44 +58,36 @@ export class MessageLeaderboard {
 				return;
 		}
 
-		const messages = await prisma.message.findMany({
+		const results = await prisma.message.groupBy({
+			by: ["userId"],
 			where: {
 				guildId: BigInt(guildId),
 				createdAt: {
 					gte
 				}
 			},
-			include: {
-				author: true
-			}
+			_count: {
+				userId: true
+			},
+			orderBy: {
+				_count: {
+					userId: "desc"
+				}
+			},
+			take: 10
 		});
-
-		const leaderboard = new Map<bigint, number>();
-
-		for (const message of messages) {
-			const authorId = BigInt(message.author.id);
-			const count = leaderboard.get(authorId) ?? 0;
-			leaderboard.set(authorId, count + 1);
-		}
-
-		const sorted = Array.from(leaderboard.entries()).sort(
-			(a, b) => b[1] - a[1]
-		);
 
 		const embed = new EmbedBuilder()
 			.setTitle("Who types the most?")
 			.setDescription(`Leaderboard for the last ${period}`)
 			.setColor("Blue");
 
-		for (let i = 0; i < Math.min(sorted.length, 10); i++) {
-			const [userId, count] = sorted[i];
-			embed.addFields(
-				{
-					name: `#${i + 1}`,
-					value: `<@${userId}>: ${count} messages`
-				},
-			);
-		}
+		results.forEach((result, index) => {
+			embed.addFields({
+				name: `#${index + 1}`,
+				value: `<@${result.userId}>: ${result._count.userId} messages`
+			});
+		});
 
 		await interaction.editReply({ embeds: [embed] });
 	}

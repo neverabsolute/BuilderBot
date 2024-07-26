@@ -51,42 +51,38 @@ export class VoiceLeaderboard {
 				return;
 		}
 
-		const voiceCalls = await prisma.voiceCalls.findMany({
+		const results = await prisma.voiceCalls.groupBy({
+			by: ["userId"],
 			where: {
 				createdAt: {
 					gte
 				}
 			},
-			select: {
-				user: true,
+			_sum: {
 				duration: true
-			}
+			},
+			orderBy: {
+				_sum: {
+					duration: "desc"
+				}
+			},
+			take: 10
 		});
 
-		const userDurations = new Map<bigint, number>();
-		for (const voiceCall of voiceCalls) {
-			const duration = userDurations.get(voiceCall.user.id) || 0;
-			userDurations.set(voiceCall.user.id, duration + voiceCall.duration);
-		}
-
-		const sorted = Array.from(userDurations.entries()).sort(
-			(a, b) => b[1] - a[1]
-		);
-
 		const embed = new EmbedBuilder()
-			.setTitle("Voice Leaderboard")
+			.setTitle("Who yaps the most?")
 			.setDescription(`Leaderboard for the past ${period}`)
 			.setColor("Blue");
 
-		for (let i = 0; i < Math.min(sorted.length, 10); i++) {
-			const [userId, duration] = sorted[i];
+		results.forEach((result, index) => {
+			const durationInMinutes = Math.floor(result._sum.duration ?? 0 / 60);
 			embed.addFields({
-				name: `#${i + 1}`,
-				value: `<@${userId}>: ${duration} ${
-					duration === 1 ? "second" : "seconds"
+				name: `#${index + 1}`,
+				value: `<@${result.userId}>: ${durationInMinutes} ${
+					durationInMinutes === 1 ? "minute" : "minutes"
 				}`
 			});
-		}
+		});
 
 		await interaction.editReply({ embeds: [embed] });
 	}

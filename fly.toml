@@ -10,4 +10,4 @@ primary_region = "dfw"
 
 [vm]
   count = 1
-  memory = "512"
+  memory = "1024"
