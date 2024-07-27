@@ -30,6 +30,12 @@ export class VoiceLeaderboard {
 	) {
 		await interaction.deferReply();
 
+		const guildId = interaction.guildId;
+		if (!guildId) {
+			await interaction.editReply("This command must be run in a guild.");
+			return;
+		}
+
 		const gte = new Date();
 		gte.setHours(0, 0, 0, 0);
 
@@ -54,6 +60,9 @@ export class VoiceLeaderboard {
 		const results = await prisma.voiceCalls.groupBy({
 			by: ["userId"],
 			where: {
+				channel: {
+					guildId: BigInt(guildId)
+				},
 				createdAt: {
 					gte
 				}
