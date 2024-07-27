@@ -87,7 +87,9 @@ export class MessageLeaderboard {
 		results.forEach((result, index) => {
 			embed.addFields({
 				name: `#${index + 1}`,
-				value: `<@${result.userId}>: ${result._count.userId} reactions`
+				value: `<@${result.userId}>: ${result._count.userId} ${
+					result._count.userId === 1 ? "reaction" : "reactions"
+				}`
 			});
 		});
 
