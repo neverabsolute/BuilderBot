@@ -1,11 +1,7 @@
 import { prisma } from "bot-prisma";
 import type { ArgsOf } from "discordx";
 import { Discord, On } from "discordx";
-import {
-	ButtonStyle,
-	ComponentType,
-	EmbedBuilder,
-} from "discord.js";
+import { ButtonStyle, ComponentType, EmbedBuilder } from "discord.js";
 import { BACH_CATEGORY_ID, BACH_QUESTIONS } from "../../../configs.js";
 
 @Discord()
@@ -36,6 +32,10 @@ export class HandleChannelCreate {
 				.setDescription(BACH_QUESTIONS.replace(/\\n/g, "\n"))
 				.setColor("Green");
 
+			bachEmbed.setFooter({
+				text: "Please keep your answers organized, short, and easy to read."
+			});
+
 			await new Promise(resolve => setTimeout(resolve, 5000));
 
 			await channel
@@ -46,7 +46,7 @@ export class HandleChannelCreate {
 
 			await channel
 				.send({
-					content: "https://www.youtube.com/watch?v=FCxE6RWE7nw"
+					content: "https://www.youtube.com/watch?v=p4GgrpH2s2Y"
 				})
 				.catch(() => {});
 		}
