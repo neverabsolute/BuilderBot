@@ -44,7 +44,6 @@ export class HandleMemberJoin {
 		}
 
 		if (rolesToAdd.length > 0) {
-			await new Promise(resolve => setTimeout(resolve, 10000));
 			await member.roles
 				.add(rolesToAdd, "Restoring member roles")
 				.catch(() => {});
