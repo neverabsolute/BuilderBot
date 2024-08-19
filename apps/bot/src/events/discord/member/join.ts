@@ -1,6 +1,7 @@
 import { prisma } from "bot-prisma";
 import type { ArgsOf } from "discordx";
 import { Discord, On } from "discordx";
+import { DEGREES } from "../../../configs.js";
 
 @Discord()
 export class HandleMemberJoin {
@@ -17,7 +18,19 @@ export class HandleMemberJoin {
 			}
 		});
 
-		if (!user) return;
+		if (!user) {
+			const enthusiastRole = member.guild.roles.cache.get(
+				DEGREES.enthusiast.id
+			);
+
+			if (enthusiastRole) {
+				await member.roles
+					.add(enthusiastRole, "Assigning enthusiast role to new user")
+					.catch(() => {});
+			}
+
+			return;
+		}
 
 		const userRoles = user.roles.map(role => role.id);
 		const roles = userRoles
@@ -32,7 +45,9 @@ export class HandleMemberJoin {
 
 		if (rolesToAdd.length > 0) {
 			await new Promise(resolve => setTimeout(resolve, 10000));
-			await member.roles.add(rolesToAdd, "Restoring member roles").catch(() => {});
+			await member.roles
+				.add(rolesToAdd, "Restoring member roles")
+				.catch(() => {});
 		}
 	}
 }
