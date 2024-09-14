@@ -48,6 +48,17 @@ export class HandleAssociateQuizStart {
 		await interaction.deferReply();
 		const member = interaction.member;
 
+		if (
+			!interaction.guild ||
+			!interaction.channel ||
+			interaction.channel.isDMBased()
+		) {
+			await interaction.editReply({
+				content: "This command can only be used in a server."
+			});
+			return;
+		}
+
 		if (!member || !(member instanceof GuildMember)) {
 			console.error("Member not found");
 			return;
@@ -257,7 +268,7 @@ export class HandleAssociateQuizStart {
 					question.type === "MULTIPLE_CHOICE"
 						? `Select ${
 								question.choices.filter(choice => choice.correct).length
-						  } correct answers`
+							} correct answers`
 						: "Select the correct answer"
 				)
 				.setMinValues(1)
@@ -330,6 +341,7 @@ export class HandleAssociateQuizStart {
 
 		setTimeout(async () => {
 			await interaction.channel
+				// @ts-expect-error - We prevent this earlier
 				?.send({
 					content: `You have 5 minutes remaining to complete the quiz <@${interaction.user.id}>!`
 				})
@@ -339,6 +351,7 @@ export class HandleAssociateQuizStart {
 
 		setTimeout(async () => {
 			await interaction.channel
+				// @ts-expect-error - We prevent this earlier
 				?.send({
 					content: `You have 1 minute remaining to complete the quiz <@${interaction.user.id}>!`
 				})

@@ -14,6 +14,18 @@ export class HandleAssociateQuizStart {
 		const lastButtonClick = lastButtonClickTimestamps.get(interaction.user.id);
 		const currentTime = Date.now();
 
+		if (
+			!interaction.guild ||
+			!interaction.channel ||
+			interaction.channel.isDMBased()
+		) {
+			await interaction.reply({
+				content: "This command can only be used in a server.",
+				ephemeral: true
+			});
+			return;
+		}
+
 		if (lastButtonClick && currentTime - lastButtonClick < rateLimitMillis) {
 			// Send a temporary error message or ignore the button event
 			await interaction.reply({
@@ -189,13 +201,15 @@ export class HandleAssociateQuizStart {
 			if (incorrectAnswers.length > 0) {
 				failedEmbed.addFields({
 					name: "**Missed Questions**",
-					value: incorrectAnswers
-						.map(id => {
-							const question = questions.find(q => q.id === id);
-							if (!question) return "";
-							return `- **${question.question}**`;
-						})
-						.join("\n") || "Something went wrong. Please contact a Professor for assistance."
+					value:
+						incorrectAnswers
+							.map(id => {
+								const question = questions.find(q => q.id === id);
+								if (!question) return "";
+								return `- **${question.question}**`;
+							})
+							.join("\n") ||
+						"Something went wrong. Please contact a Professor for assistance."
 				});
 			}
 			await interaction.followUp({

@@ -8,6 +8,17 @@ export class HandleAssociateQuizQuestionSubmit {
 	async handleSubmit(interaction: StringSelectMenuInteraction): Promise<void> {
 		await interaction.deferReply({ ephemeral: true });
 
+		if (
+			!interaction.guild ||
+			!interaction.channel ||
+			interaction.channel.isDMBased()
+		) {
+			await interaction.editReply({
+				content: "This command can only be used in a server."
+			});
+			return;
+		}
+
 		const response = await prisma.associatesResponses.findFirst({
 			where: {
 				userId: BigInt(interaction.user.id),
