@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, PartialGroupDMChannel } from "discord.js";
 
 import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
@@ -15,6 +15,15 @@ export class AssociatesInfo {
 	})
 	async associates(command: SimpleCommandMessage) {
 		const channel = command.message.channel;
+
+		if (channel instanceof PartialGroupDMChannel) {
+			return;
+		}
+
+		if (channel instanceof PartialGroupDMChannel) {
+			return;
+		}
+
 		const member = command.message.member;
 
 		if (!member) {
