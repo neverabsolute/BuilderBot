@@ -1,31 +1,18 @@
 import { dirname as dir, importx } from "@discordx/importer";
-import * as Sentry from "@sentry/node";
 import { prisma } from "bot-prisma";
 import { GuildMember, IntentsBitField } from "discord.js";
 import { Client } from "discordx";
 import "reflect-metadata";
 import { saveMessage, upsertMember } from "./common/util.js";
-import { BOT_TOKEN, GUILD_ID, SENTRY_DSN } from "./configs.js";
+import { BOT_TOKEN, GUILD_ID } from "./configs.js";
 import { initializeLoops } from "./loops/main.js";
-
-Sentry.init({
-	dsn: SENTRY_DSN,
-	integrations: [
-		new Sentry.Integrations.Console({}),
-		new Sentry.Integrations.Http({ tracing: true }),
-		new Sentry.Integrations.OnUncaughtException({}),
-		new Sentry.Integrations.OnUnhandledRejection({})
-	]
-});
 
 process.on("uncaughtException", error => {
 	console.error("Unhandled Exception", error);
-	Sentry.captureException(error);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
 	console.error("Unhandled Rejection at:", promise, "reason:", reason);
-	Sentry.captureException(reason);
 });
 
 export const bot = new Client({
