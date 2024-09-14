@@ -3,7 +3,7 @@
 FROM node:18-alpine3.16 AS builder
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo@1.10.15 pnpm@9.5.0
+RUN npm i -g turbo@1.13.4 pnpm@9.5.0
 COPY --link . .
 RUN turbo prune --scope=bot --docker
 

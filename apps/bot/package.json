@@ -9,7 +9,7 @@
 		"build": "tsc && copyfiles -u 1 \"./src/common/resources/**/*\" build",
 		"build:dev": "tsc --incremental && copyfiles -u 1 \"./src/common/resources/**/*\" build",
 		"dev": "tsc-watch --onSuccess \"node build/main.js\" --noClear",
-		"start": "yarn migrate:deploy && node build/main.js",
+		"start": "pnpm migrate:deploy && node build/main.js",
 		"deploy": "cd ../.. && flyctl deploy -c fly.toml --dockerfile Dockerfile --remote-only",
 		"lint": "eslint . --ext .ts"
 	},
