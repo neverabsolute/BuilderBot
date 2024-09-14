@@ -3,7 +3,7 @@
 FROM node:18-alpine3.16 AS builder
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo@1.10.15 pnpm@8.1.0
+RUN yarn global add turbo@1.10.15 pnpm@9.5.0
 COPY --link . .
 RUN turbo prune --scope=bot --docker
 
@@ -11,7 +11,7 @@ RUN turbo prune --scope=bot --docker
 FROM node:18-alpine3.16 AS installer
 RUN apk update && apk add --update --no-cache curl libc6-compat openrc openssl1.1-compat-dev && \
     rm -rf /var/cache/apk/*
-RUN yarn global add pnpm@8.1.0
+RUN yarn global add pnpm@9.5.0
 WORKDIR /app
 
 # First install the dependencies (as they change less often)
