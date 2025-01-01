@@ -3,6 +3,7 @@ import { EmbedBuilder, PartialGroupDMChannel } from "discord.js";
 import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
 const bachelorMessageText = `A degree for an above average builder. Builders with a Bachelor's Degree can recognize significant flaws and have a good understanding of metas.
+
 > To earn this degree, complete a short answer quiz.
 
 **Rules**

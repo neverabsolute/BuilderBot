@@ -3,6 +3,7 @@ import { EmbedBuilder, PartialGroupDMChannel } from "discord.js";
 import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
 const masterMessageText = `A degree for an advanced builder. These builders are very strong fundamentally, and can create solid bases
+
 > To earn this degree, submit your best base via a Sanctuary or Rusticated code and optionally a YouTube link of a tour.
 
 **Rules**

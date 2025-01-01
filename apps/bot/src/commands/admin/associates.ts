@@ -2,7 +2,8 @@ import { EmbedBuilder, PartialGroupDMChannel } from "discord.js";
 
 import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
-const associatesMessageText = `A degree for a good builder. Prove your knowledge with building fundamentals. 
+const associatesMessageText = `A degree for a good builder. Prove your knowledge with building fundamentals.
+
 > To earn this degree, complete a multiple choice quiz.
 
 **Rules**
