@@ -17,6 +17,8 @@ const roleMessageText = `\`👔\` **Staff Roles**
 - <@&1317054857349435412> - The best builders that push the building meta for the competitive scene
 - <@&1317054554239406141> - The best builders that have shown excellence in building fundamentals
 - <@&1193321534996107365> - Advanced builders that have demonstrated their fundamental skills to professors with a solid base
+- <@&1193303225990926460> - Above average builders that are up to date on building metas and can consistently recognize errors
+- <@&1193303199394832516> - Builders that have an understanding of basic building fundamentals
 > Check out <#1193368252009676850> to apply
 
 \`⚪\` **Other Roles**
