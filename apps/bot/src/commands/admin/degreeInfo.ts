@@ -2,7 +2,7 @@ import { EmbedBuilder, PartialGroupDMChannel } from "discord.js";
 
 import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
-const degreeInfoMessageText = `Introducing Building Degrees from the prestigious Building Bulletin! Test your build skills by creating a ticket below. If you pass the test you will be awarded with a building degree that proves your building plan strength. 
+const degreeInfoMessageText = `Introducing Building Degrees from the prestigious Building Bulletin! Test your build skills by creating a ticket in <#1193368252009676850>. If you pass the test you will be awarded with a building degree that proves your building plan strength. 
 
 > There are five separate degrees that you can earn, each with their own rewards!`;
 
