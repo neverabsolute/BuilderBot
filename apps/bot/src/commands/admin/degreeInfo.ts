@@ -4,7 +4,7 @@ import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
 const degreeInfoMessageText = `Introducing Building Degrees from the prestigious Building Bulletin! Test your build skills by creating a ticket below. If you pass the test you will be awarded with a building degree that proves your building plan strength. 
 
-> There are four separate degrees that you can earn, each with their own rewards!`;
+> There are five separate degrees that you can earn, each with their own rewards!`;
 
 @Discord()
 export class DegreeInfo {
