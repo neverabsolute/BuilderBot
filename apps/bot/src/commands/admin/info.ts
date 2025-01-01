@@ -12,15 +12,16 @@ const roleMessageText = `\`👔\` **Staff Roles**
 - <@&1166041937502011572> - Professors in Training
 
 \`🎓\` **Degrees**
-- <@&802287742426939412> - Legendary builders that have created meta breaking, revolutionary building concepts
-- <@&1193321534996107365> - Advanced builders that have demonstrated their skill to professors with a unique, advanced, and near-perfect base
-- <@&1193303225990926460> - Above average builders that are up to date on building metas and can consistently recognize errors
-- <@&1193303199394832516> - Builders that have an understanding of basic building fundamentals
+- <@&802287742426939412> - The best builders that have invented/refined a new building concept that has a proven usecase
+- <@&1317054953201733662> - The best builders that have pushed the limits of base building
+- <@&1317054857349435412> - The best builders that push the building meta for the competitive scene
+- <@&1317054554239406141> - The best builders that have shown excellence in building fundamentals
+- <@&1193321534996107365> - Advanced builders that have demonstrated their fundamental skills to professors with a solid base
 > Check out <#1193368252009676850> to apply
 
 \`⚪\` **Other Roles**
 - <@&1108091898930941962> - Retired community members that contributed highly to Building Bulletin
-- <@&636796048580542494> - The best builders that consistently make bases to perfection. Given at discretion by <@&722201585534500925>
+- <@&636796048580542494> - Builders that have proven their building expertise, awarded by <@&722201585534500925>
 - <@&1116831297017479249> - Deans that have retired from management
 - <@&802602838353117234> - YouTubers/Streamers
 - <@&802287690502111232> - Users that earned their Masters Degree before 2024
@@ -35,7 +36,7 @@ const boostMessageText = `\`🚀\` **Boost Perks**
 - Hoisted role in the user list
 - Booster role icon
 - Can change nickname
-- Access to exclusive #builderboys channel`;
+- Access to the Building Bulletin private build server`;
 
 @Discord()
 export class Info {

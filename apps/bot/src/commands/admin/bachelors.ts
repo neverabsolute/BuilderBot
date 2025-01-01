@@ -2,10 +2,10 @@ import { EmbedBuilder, PartialGroupDMChannel } from "discord.js";
 
 import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
-const bachelorMessageText = `A degree for an above average builder. Builders with a Bachelor's Degree separate themselves from the rest of the pack through knowledge about the current metas in rust building.
-To earn this degree, complete a short answer quiz.
-
-> **Reward:** Bachelor's Degree role and a special in-game color on <#778130373656707082> build servers.`;
+const bachelorMessageText = `A degree for an above average builder. Builders with a Bachelor's Degree can recognize significant flaws and have a good understanding of metas.
+> To earn this degree, complete a short answer quiz.
+**Rules**
+- For a Bachelor's degree you are not allowed to give or receive help from anyother builder, asking in chat for answers will invalidate the attempt at this degree, and increase the cooldown between resubmits.`;
 
 @Discord()
 export class BachelorsInfo {
