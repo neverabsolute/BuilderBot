@@ -4,6 +4,7 @@ import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
 const bachelorMessageText = `A degree for an above average builder. Builders with a Bachelor's Degree can recognize significant flaws and have a good understanding of metas.
 > To earn this degree, complete a short answer quiz.
+
 **Rules**
 - For a Bachelor's degree you are not allowed to give or receive help from anyother builder, asking in chat for answers will invalidate the attempt at this degree, and increase the cooldown between resubmits.`;
 

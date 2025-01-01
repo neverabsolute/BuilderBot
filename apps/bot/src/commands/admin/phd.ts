@@ -3,6 +3,7 @@ import { EmbedBuilder, PartialGroupDMChannel } from "discord.js";
 import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
 const phdMessageText = `Awarded to a builder that has invented/refined a new building concept with a practical proven use case.
+
 > To earn this degree, submit your concept in a ticket with an explanation, screenshots, and if applicable: a code or video.`;
 
 @Discord()

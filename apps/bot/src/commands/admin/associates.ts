@@ -4,6 +4,7 @@ import { Discord, SimpleCommand, SimpleCommandMessage } from "discordx";
 
 const associatesMessageText = `A degree for a good builder. Prove your knowledge with building fundamentals. 
 > To earn this degree, complete a multiple choice quiz.
+
 **Rules**
 - For Associates degree you are not allowed to give or receive help from any other builder, asking in chat for answers will invalidate any attempts at this degree, and increase the cooldown between resubmits.`;
 
