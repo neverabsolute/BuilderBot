@@ -21,13 +21,27 @@ model User {
   responses       AssociatesResponses[]
   cooldownsReset  AssociatesResponses[] @relation("CooldownsReset")
   ticketBans      TicketBan[]
+  chains          Chain[]
   degreesGiven    DegreeChanges[]       @relation("DegreesGiven")
   degreesReceived DegreeChanges[]       @relation("DegreesReceived")
   voiceCalls      VoiceCalls[]
-  reactions        Reaction[]
+  reactions       Reaction[]
 }
 
 model TicketBan {
+  id        Int      @id @unique @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    BigInt
+  givenBy   BigInt
+  removedBy BigInt?
+  reason    String
+  active    Boolean  @default(true)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chain {
   id        Int      @id @unique @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    BigInt
@@ -49,7 +63,7 @@ model Message {
   channel   Channel?   @relation(fields: [channelId], references: [id])
   channelId BigInt?
   guildId   BigInt
-  reactions  Reaction[]
+  reactions Reaction[]
 }
 
 model AssociatesConfiguration {
