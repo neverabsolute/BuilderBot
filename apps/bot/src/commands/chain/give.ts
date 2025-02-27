@@ -75,7 +75,7 @@ export class Give {
 
 		if (existingChain && existingChain.expiresAt > new Date()) {
 			await interaction.editReply(
-				`This user is already ticket banned until <t:${Math.floor(
+				`This user is already chained until <t:${Math.floor(
 					existingChain.expiresAt.getTime() / 1000
 				)}:f>`
 			);

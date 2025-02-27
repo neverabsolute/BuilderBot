@@ -41,7 +41,7 @@ export class Info {
 
 		if (chains.length === 0) {
 			const message = await interaction.editReply(
-				"This user has no ticket bans."
+				"This user has no chains."
 			);
 			setTimeout(() => {
 				message.delete();
